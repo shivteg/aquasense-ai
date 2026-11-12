@@ -103,7 +103,7 @@ export default function Footer({ darkMode: _darkMode }: FooterProps) {
               Official Repository
             </h4>
             <a
-              href="https://github.com/shivteg/aquaclean-ai"
+              href="https://github.com/shivteg/aquasense-ai"
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-white transition-all group"
@@ -113,7 +113,7 @@ export default function Footer({ darkMode: _darkMode }: FooterProps) {
                 <span className="font-semibold text-white group-hover:text-cyan-400 transition-colors">
                   GitHub Project
                 </span>
-                <span className="text-[10px] text-white/50 truncate">github.com/shivteg/aquaclean-ai</span>
+                <span className="text-[10px] text-white/50 truncate">github.com/shivteg/aquasense-ai</span>
               </div>
             </a>
 

@@ -109,8 +109,8 @@ Transports remaining pond water through a multi-barrier purification train for v
 ### Installation
 
 ```bash
-git clone https://github.com/shivteg/aquaclean-ai.git
-cd aquaclean-ai
+git clone https://github.com/shivteg/aquasense-ai.git
+cd aquasense-ai
 npm install
 npm run dev
 ```
@@ -130,7 +130,7 @@ npm run build
 - **Event**: Lovely Professional University Innovation Competition
 - **Dates**: 14–15 November
 - **Category**: Clean Technology, Robotics & Environmental Sustainability
-- **Repository**: [https://github.com/shivteg/aquaclean-ai](https://github.com/shivteg/aquaclean-ai)
+- **Repository**: [https://github.com/shivteg/aquasense-ai](https://github.com/shivteg/aquasense-ai)
 
 ---
 

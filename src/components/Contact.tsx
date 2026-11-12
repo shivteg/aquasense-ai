@@ -173,12 +173,12 @@ export default function Contact({ darkMode: _darkMode, onShowToast }: ContactPro
                 <div className="flex items-center gap-2.5 text-white/80">
                   <ExternalLink className="w-4 h-4 text-purple-400 shrink-0" />
                   <a
-                    href="https://github.com/shivteg/aquaclean-ai"
+                    href="https://github.com/shivteg/aquasense-ai"
                     target="_blank"
                     rel="noreferrer"
                     className="text-cyan-400 hover:text-cyan-300 underline"
                   >
-                    github.com/shivteg/aquaclean-ai
+                    github.com/shivteg/aquasense-ai
                   </a>
                 </div>
               </div>

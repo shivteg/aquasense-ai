@@ -17,7 +17,7 @@ const navLinks = [
   { label: 'Dashboard', href: '#dashboard' },
   { label: 'Technology', href: '#technology' },
   { label: 'Impact', href: '#impact' },
-  { label: 'Team', href: '#team' },
+  { label: 'Facility Map', href: '#facility-map' },
 ]
 
 export default function Navbar({ darkMode, onToggleDark }: NavbarProps) {

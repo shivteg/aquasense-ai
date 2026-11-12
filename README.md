@@ -37,7 +37,7 @@ The website contains **12 fully animated sections**:
 | 8 | **Comparison** | Side-by-side Manual vs Automated comparison with animated Recharts charts |
 | 9 | **Impact** | 7 benefit cards with animated icons and scroll-triggered entrance |
 | 10 | **Future Scope** | Roadmap for scalability, IoT integration, and next steps |
-| 11 | **Team** | Placeholder profile cards for team members, project guide, and institution |
+| 11 | **Facility Map** | Interactive plant blueprint schematic with clickable subsystem nodes |
 | 12 | **Contact** | Validated contact form with honest no-backend disclaimer toast |
 
 ---

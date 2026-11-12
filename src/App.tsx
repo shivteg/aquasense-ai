@@ -10,7 +10,7 @@ import Technology from './components/Technology';
 import Comparison from './components/Comparison';
 import Impact from './components/Impact';
 import FutureScope from './components/FutureScope';
-import Team from './components/Team';
+import FacilityMap from './components/FacilityMap';
 import Contact from './components/Contact';
 import ScientificAccuracy from './components/ScientificAccuracy';
 import Footer from './components/Footer';
@@ -101,10 +101,10 @@ export default function App() {
         {/* Page 10: Future Scope */}
         <FutureScope darkMode={darkMode} />
 
-        {/* Page 11: Project Team */}
-        <Team darkMode={darkMode} />
+        {/* Interactive Facility Blueprint Map */}
+        <FacilityMap darkMode={darkMode} />
 
-        {/* Page 12: Contact */}
+        {/* Contact Section */}
         <Contact darkMode={darkMode} onShowToast={showToast} />
 
         {/* Section 7 Requirement: Scientific Accuracy & Rigor Notice */}

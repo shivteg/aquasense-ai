@@ -35,7 +35,7 @@ const quickLinks = [
   { label: 'Dashboard', href: '#dashboard' },
   { label: 'Technology', href: '#technology' },
   { label: 'Impact', href: '#impact' },
-  { label: 'Team', href: '#team' },
+  { label: 'Facility Map', href: '#facility-map' },
 ]
 
 const socialLinks = [

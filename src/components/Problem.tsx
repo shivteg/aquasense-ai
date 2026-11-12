@@ -1,363 +1,272 @@
-import { AnimatePresence, motion, useInView } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import {
   AlertTriangle,
   ChevronDown,
-  Layers,
   Leaf,
-  ShoppingBag,
+  Skull,
   Trash2,
-  User,
-  Zap,
+  Waves,
+  ShieldAlert,
 } from 'lucide-react';
-import { useRef, useState } from 'react';
 
-interface WasteCard {
+interface ProblemCard {
   id: string;
   icon: React.ReactNode;
   title: string;
   brief: string;
   detail: string;
-  color: string;
-  borderColor: string;
+  consequences: string[];
   stat: string;
   statLabel: string;
+  statSource: string;
+  color: string;
+  borderColor: string;
+  accent: string;
 }
 
-const wasteCards: WasteCard[] = [
+const problemCards: ProblemCard[] = [
+  {
+    id: 'algae',
+    icon: <Waves size={28} />,
+    title: 'Excessive Algal Blooms & Eutrophication',
+    brief: 'Agricultural fertiliser runoff and organic sewage load ponds with nitrates and phosphorus, triggering explosive cyanobacteria growth.',
+    detail: 'Dense algal scums block sunlight penetration, shutting down photosynthesis in sub-surface plants. When the massive algal biomass dies, aerobic bacteria consume virtually all dissolved oxygen during decomposition. This induces severe hypoxia (dissolved oxygen dropping below 2 mg/L), precipitating catastrophic fish kills and anaerobic rotting that releases toxic hydrogen sulphide gas.',
+    consequences: [
+      'Rapid dissolved oxygen depletion down to hypoxic (< 2 mg/L) thresholds',
+      'Mass fish suffocation and extinction of native aquatic micro-fauna',
+      'Production of harmful cyanotoxins (microcystins) hazardous to livestock',
+    ],
+    stat: '70%+',
+    statLabel: 'of peri-urban ponds suffer moderate to severe eutrophication',
+    statSource: 'CPCB & UNEP Freshwater Report',
+    color: 'from-emerald-500/20 to-emerald-950/20',
+    borderColor: 'border-emerald-500/40',
+    accent: 'text-emerald-400',
+  },
   {
     id: 'plastic',
     icon: <Trash2 size={28} />,
-    title: 'Plastic Waste',
-    brief:
-      'Single-use plastic bottles, containers and packaging are washed into intake channels during storms and flooding.',
-    detail:
-      'Plastic waste is one of the most persistent contaminants entering water treatment intake systems. PET bottles, HDPE containers and film plastics float at the water surface, where they can clog bar screens, reduce flow capacity and damage rotating mechanical equipment. Their buoyancy makes them extremely difficult to remove without dedicated floating-debris rakes. Microplastic fragments released by photodegradation further contaminate the effluent stream if primary screening is not effective.',
-    color: 'from-red-500/20 to-red-900/10',
-    borderColor: 'border-red-500/40',
+    title: 'Floating Plastic & Polythene Debris',
+    brief: 'Single-use PET bottles, polythene carry-bags, and packaging wrappers choke pond perimeters and water surfaces.',
+    detail: 'Buoyant plastic waste forms impermeable blankets over pond surfaces, reducing air-water gaseous exchange. Solar UV radiation and wave action physically fragment these plastics into hazardous microplastics (< 5 mm). Microplastics are ingested by fish and waterfowl, entering the human food chain and accumulating endocrine-disrupting phthalates in local community water supplies.',
+    consequences: [
+      'Physical surface blanketing impedes natural wind-driven pond re-aeration',
+      'Photodegradation generates bio-accumulating microplastic particles',
+      'Entanglement hazards for waterfowl, amphibians, and native pond turtles',
+    ],
     stat: '8M+',
-    statLabel: 'tonnes enter waterways yearly',
+    statLabel: 'tonnes of plastic enter inland water networks annually',
+    statSource: 'UNEP Global Environmental Outlook',
+    color: 'from-red-500/20 to-red-950/20',
+    borderColor: 'border-red-500/40',
+    accent: 'text-red-400',
   },
   {
-    id: 'leaves',
+    id: 'organic-rot',
     icon: <Leaf size={28} />,
-    title: 'Floating Leaves',
-    brief:
-      'Seasonal leaf-fall creates dense mats that float on intake water, reducing oxygen and blocking screens.',
-    detail:
-      'Organic leaf matter accumulates rapidly during autumn and monsoon seasons. As leaves decompose, they deplete dissolved oxygen and promote microbial growth, increasing the biochemical oxygen demand (BOD) of the incoming water. Leaf mats physically obstruct bar screens, reducing throughput and forcing manual raking every few hours during peak leaf-fall periods. The decomposition process also releases tannins, which discolour treated water if not removed at the screening stage.',
-    color: 'from-green-500/20 to-green-900/10',
-    borderColor: 'border-green-500/40',
-    stat: '40%',
-    statLabel: 'screen blockages are leaf-related',
+    title: 'Decaying Organic Matter & Siltation',
+    brief: 'Seasonal leaf-fall and rotting terrestrial vegetation form dense anaerobic benthic sludge layers.',
+    detail: 'Accumulated dead leaves and unmanaged organic matter create an immense Biochemical Oxygen Demand (BOD > 45 mg/L). Rather than decomposing cleanly in aerated conditions, the debris rots anaerobically on the pond floor, depleting water table reserves, silting up water retention volumes, and releasing greenhouse gases like methane (CH4) directly into the atmosphere.',
+    consequences: [
+      'Severe Biochemical Oxygen Demand (BOD) spikes degrading water clarity',
+      'Methane and foul thiol gas emissions from anaerobic sludge layers',
+      'Accelerated pond siltation, reducing dry-season irrigation storage by up to 50%',
+    ],
+    stat: '50%',
+    statLabel: 'loss of pond water storage capacity due to organic silt buildup',
+    statSource: 'FAO Water Resource Assessment',
+    color: 'from-amber-500/20 to-amber-950/20',
+    borderColor: 'border-amber-500/40',
+    accent: 'text-amber-400',
   },
   {
-    id: 'polythene',
-    icon: <ShoppingBag size={28} />,
-    title: 'Polythene & Wrappers',
-    brief:
-      'Lightweight polythene bags and food wrappers are carried by wind and runoff directly into open intake channels.',
-    detail:
-      'Thin-gauge polythene bags and food-grade film wrappers are particularly hazardous because they conform to the shape of bar screen openings, creating an almost impermeable membrane. Even moderate accumulations can reduce inlet flow by up to 60 % within minutes during rainfall events. Workers must typically shut down sections of the inlet to safely clear them, causing costly treatment downtime. Their low weight also makes automated capture challenging without purpose-designed mesh conveyors.',
-    color: 'from-yellow-500/20 to-yellow-900/10',
-    borderColor: 'border-yellow-500/40',
-    stat: '60%',
-    statLabel: 'flow reduction when screens clog',
-  },
-  {
-    id: 'debris',
-    icon: <Layers size={28} />,
-    title: 'Accumulated Debris',
-    brief:
-      'Mixed sediment, sticks, foam and industrial waste settles and compounds screening problems over time.',
-    detail:
-      'Beyond discrete waste categories, treatment plants face a continuous accumulation of mixed debris — broken branches, foam, cloth fibres, sediment clumps and industrial offcuts. This heterogeneous mass is particularly problematic: it bridges across bar screen openings, anchors floating plastics in place and creates anaerobic pockets that generate hydrogen sulphide. Manual removal of accumulated debris is a hazardous task requiring confined-space protocols and specialist equipment, often disrupting normal plant operations for several hours.',
-    color: 'from-blue-500/20 to-blue-900/10',
-    borderColor: 'border-blue-500/40',
-    stat: '3–6 hrs',
-    statLabel: 'downtime per major clearance event',
+    id: 'water-scarcity',
+    icon: <Skull size={28} />,
+    title: 'Loss of Usable Community Water',
+    brief: 'Polluted ponds become hazardous breeding grounds rather than vital community reservoirs.',
+    detail: 'Ponds that historically supplied irrigation for smallholder farmers, livestock watering, and groundwater table recharge become biological liabilities. Stagnant choked waters breed disease-carrying mosquito vectors (malaria, dengue) and foster opportunistic pathogenic bacteria such as E. coli and Salmonella, forcing rural communities to rely on declining deep borewells.',
+    consequences: [
+      'Water rendered completely unsuited for livestock or crop irrigation',
+      'Proliferation of mosquito breeding grounds and waterborne enteric vectors',
+      'Severing of groundwater table recharge pathways into surrounding farmland',
+    ],
+    stat: '2.2B',
+    statLabel: 'people globally lack access to safely managed freshwater reservoirs',
+    statSource: 'WHO/UNICEF JMP Water Report',
+    color: 'from-purple-500/20 to-purple-950/20',
+    borderColor: 'border-purple-500/40',
+    accent: 'text-purple-400',
   },
 ];
-
-interface ComparisonStep {
-  label: string;
-}
-
-const manualSteps: ComparisonStep[] = [
-  { label: 'Operator notices blockage' },
-  { label: 'Manually rake screen bars' },
-  { label: 'Collect & bag waste' },
-  { label: 'Dispose offsite by hand' },
-  { label: 'Resume normal flow' },
-];
-
-const automatedSteps: ComparisonStep[] = [
-  { label: 'Sensors detect debris build-up' },
-  { label: 'Automated rake activates' },
-  { label: 'Conveyor transports waste' },
-  { label: 'Waste binned automatically' },
-  { label: 'Continuous uninterrupted flow' },
-];
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.12, duration: 0.5, ease: 'easeOut' as const },
-  }),
-};
-
-const detailVariants = {
-  hidden: { opacity: 0, height: 0 },
-  visible: { opacity: 1, height: 'auto', transition: { duration: 0.35, ease: 'easeOut' as const } },
-  exit: { opacity: 0, height: 0, transition: { duration: 0.25, ease: 'easeIn' as const } },
-};
 
 export default function Problem() {
-  const [expandedCard, setExpandedCard] = useState<string | null>(null);
-  const [activeComparison, setActiveComparison] = useState<'manual' | 'automated'>('manual');
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
+  const [expandedId, setExpandedId] = useState<string | null>('algae');
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
 
-  const toggleCard = (id: string) => {
-    setExpandedCard((prev) => (prev === id ? null : id));
+  const toggleExpand = (id: string) => {
+    setExpandedId(expandedId === id ? null : id);
   };
 
   return (
     <section
       id="problem"
-      ref={sectionRef}
-      className="relative overflow-hidden bg-[#0a1628] py-24 text-white"
+      ref={ref}
+      className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#0a1628] via-[#0d1e34] to-[#0a1628] overflow-hidden"
     >
-      {/* Background gradient blobs */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-40 top-0 h-96 w-96 rounded-full bg-cyan-500/5 blur-3xl"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-40 bottom-0 h-96 w-96 rounded-full bg-blue-700/10 blur-3xl"
-      />
+      {/* Decorative glows */}
+      <div className="absolute top-1/3 left-0 w-96 h-96 bg-red-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="container mx-auto max-w-6xl px-4">
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="mb-4 flex items-center gap-2"
-        >
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-red-400/30 bg-red-500/10 px-3 py-1 text-sm font-medium text-red-400">
-            <AlertTriangle size={14} />
-            The Problem
-          </span>
-        </motion.div>
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold uppercase tracking-widest mb-4"
+          >
+            <AlertTriangle className="w-3.5 h-3.5" />
+            Ecological Threat Analysis
+          </motion.div>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-5 text-4xl font-bold leading-tight lg:text-5xl"
-        >
-          A Hidden Challenge in{' '}
-          <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-            Water Treatment
-          </span>
-        </motion.h2>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-6"
+            style={{ fontFamily: 'Poppins, sans-serif' }}
+          >
+            The Crisis Facing Our{' '}
+            <span className="bg-gradient-to-r from-red-400 via-amber-300 to-emerald-400 bg-clip-text text-transparent">
+              Freshwater Ponds
+            </span>
+          </motion.h2>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-16 max-w-3xl text-lg text-white/70"
-        >
-          Every day, tonnes of solid waste — plastic bottles, polythene bags, leaves
-          and assorted debris — flow into water treatment intake channels through
-          rivers, canals and stormwater drains. Without reliable removal, these
-          contaminants block screens, strain equipment and compromise water quality.
-          Traditional manual collection is slow, hazardous and simply cannot keep pace
-          with the volume.
-        </motion.p>
-
-        {/* Waste cards grid */}
-        <div className="mb-20 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {wasteCards.map((card, i) => (
-            <motion.div
-              key={card.id}
-              custom={i}
-              variants={cardVariants}
-              initial="hidden"
-              animate={isInView ? 'visible' : 'hidden'}
-              className={`cursor-pointer rounded-2xl border bg-gradient-to-br ${card.color} ${card.borderColor} p-5 transition-shadow hover:shadow-[0_8px_30px_rgba(6,182,212,0.12)]`}
-              onClick={() => toggleCard(card.id)}
-              role="button"
-              aria-expanded={expandedCard === card.id}
-              tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && toggleCard(card.id)}
-            >
-              {/* Card header */}
-              <div className="mb-3 flex items-start justify-between">
-                <span className="text-cyan-400">{card.icon}</span>
-                <motion.div
-                  animate={{ rotate: expandedCard === card.id ? 180 : 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="text-white/40"
-                >
-                  <ChevronDown size={18} />
-                </motion.div>
-              </div>
-
-              <h3 className="mb-1 text-lg font-semibold text-white">{card.title}</h3>
-              <p className="mb-4 text-sm leading-relaxed text-white/60">{card.brief}</p>
-
-              {/* Stat badge */}
-              <div className="inline-flex flex-col">
-                <span className="text-2xl font-bold text-cyan-400">{card.stat}</span>
-                <span className="text-xs text-white/50">{card.statLabel}</span>
-              </div>
-
-              {/* Expandable detail */}
-              <AnimatePresence initial={false}>
-                {expandedCard === card.id && (
-                  <motion.div
-                    variants={detailVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    className="overflow-hidden"
-                  >
-                    <div className="mt-4 border-t border-white/10 pt-4 text-sm leading-relaxed text-white/70">
-                      {card.detail}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-base sm:text-lg text-white/70 leading-relaxed"
+          >
+            Freshwater ponds are biodiversity hotspots and critical agricultural buffers. Today,
+            uncontrolled floating plastics, nutrient-induced algal blooms, and water pollution are
+            destroying aquatic life and depriving communities of vital water resources.
+          </motion.p>
         </div>
 
-        {/* Manual vs Automated Comparison */}
+        {/* 4 Deep-Dive Problem Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+          {problemCards.map((card, idx) => {
+            const isExpanded = expandedId === card.id;
+            return (
+              <motion.div
+                key={card.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.3 + idx * 0.1 }}
+                className={`rounded-3xl bg-slate-900/80 border ${card.borderColor} backdrop-blur-xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 shadow-xl`}
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div className="p-3 rounded-2xl bg-white/5 border border-white/10 shrink-0">
+                      <span className={card.accent}>{card.icon}</span>
+                    </div>
+                    <div className="text-right">
+                      <div className={`text-2xl font-black font-mono ${card.accent}`}>{card.stat}</div>
+                      <div className="text-[11px] text-white/50 max-w-[180px] leading-tight">{card.statLabel}</div>
+                      <div className="text-[9px] text-white/30 font-mono mt-0.5">Source: {card.statSource}</div>
+                    </div>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    {card.title}
+                  </h3>
+
+                  <p className="text-sm text-white/70 leading-relaxed mb-4">
+                    {card.brief}
+                  </p>
+
+                  {/* Environmental Consequences List */}
+                  <div className="space-y-1.5 mb-4">
+                    {card.consequences.map((c, i) => (
+                      <div key={i} className="flex items-start gap-2 text-xs text-white/80">
+                        <span className="text-red-400 font-bold shrink-0">•</span>
+                        <span>{c}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Expandable Deep Dive */}
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="pt-4 border-t border-white/10 text-xs sm:text-sm text-white/75 leading-relaxed bg-white/5 p-4 rounded-xl mt-3">
+                          {card.detail}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <button
+                  onClick={() => toggleExpand(card.id)}
+                  className={`mt-4 py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-between transition-all cursor-pointer ${
+                    isExpanded ? 'bg-white/10 text-white' : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <span>{isExpanded ? 'Collapse Analysis' : 'Read Scientific Impact Breakdown'}</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+                </button>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Visual Cascade Diagram */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm"
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, delay: 0.6 }}
+          className="p-6 sm:p-8 rounded-3xl bg-red-950/30 border border-red-500/30 backdrop-blur-xl"
         >
-          <h3 className="mb-2 text-center text-2xl font-bold text-white">
-            Manual vs Automated Cleaning
-          </h3>
-          <p className="mb-8 text-center text-sm text-white/50">
-            Tap a panel to compare the two approaches side by side.
-          </p>
-
-          {/* Toggle tabs */}
-          <div className="mb-8 flex justify-center">
-            <div className="flex rounded-xl border border-white/10 bg-white/5 p-1">
-              <button
-                onClick={() => setActiveComparison('manual')}
-                className={`flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-all ${
-                  activeComparison === 'manual'
-                    ? 'bg-red-500/80 text-white shadow-lg'
-                    : 'text-white/50 hover:text-white'
-                }`}
-              >
-                <User size={16} />
-                Manual Cleaning
-              </button>
-              <button
-                onClick={() => setActiveComparison('automated')}
-                className={`flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-all ${
-                  activeComparison === 'automated'
-                    ? 'bg-cyan-500/80 text-white shadow-lg'
-                    : 'text-white/50 hover:text-white'
-                }`}
-              >
-                <Zap size={16} />
-                Automated Cleaning
-              </button>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+            <div className="flex items-center gap-3">
+              <ShieldAlert className="w-6 h-6 text-red-400 shrink-0" />
+              <div>
+                <h4 className="text-base font-bold text-white">The Vicious Cycle of Pond Degradation</h4>
+                <div className="text-xs text-white/60">How unaddressed pond pollution snowballs into total ecosystem collapse</div>
+              </div>
             </div>
+            <span className="text-xs font-mono text-red-300 bg-red-500/20 px-3 py-1 rounded-full border border-red-500/30">
+              Unchecked Ecological Collapse
+            </span>
           </div>
 
-          {/* Comparison panels side-by-side */}
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* Manual side */}
-            <div
-              className={`rounded-2xl border p-6 transition-all duration-300 ${
-                activeComparison === 'manual'
-                  ? 'border-red-500/40 bg-red-500/10'
-                  : 'border-white/5 bg-white/5 opacity-40'
-              }`}
-            >
-              <div className="mb-4 flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/20 text-red-400">
-                  <User size={20} />
-                </span>
-                <span className="text-lg font-semibold text-white">Manual Cleaning</span>
-              </div>
-              <ul className="space-y-3">
-                {manualSteps.map((step, i) => (
-                  <motion.li
-                    key={i}
-                    initial={{ opacity: 0, x: -15 }}
-                    animate={
-                      activeComparison === 'manual' && isInView
-                        ? { opacity: 1, x: 0 }
-                        : { opacity: 0.4, x: 0 }
-                    }
-                    transition={{ delay: i * 0.08 }}
-                    className="flex items-center gap-3 text-sm text-white/70"
-                  >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-red-500/40 bg-red-500/20 text-xs font-bold text-red-400">
-                      {i + 1}
-                    </span>
-                    {step.label}
-                  </motion.li>
-                ))}
-              </ul>
-              <div className="mt-5 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-xs text-red-300">
-                ⚠️ Requires 2–4 operators, repeated multiple times daily, with associated
-                safety risks.
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs pt-4 border-t border-white/10">
+            <div className="p-3 rounded-xl bg-white/5">
+              <span className="text-red-400 font-bold block mb-1">1. Nutrient Overload</span>
+              <span className="text-white/70">Agricultural fertiliser runoff (nitrates & phosphates) floods stagnant ponds.</span>
             </div>
-
-            {/* Automated side */}
-            <div
-              className={`rounded-2xl border p-6 transition-all duration-300 ${
-                activeComparison === 'automated'
-                  ? 'border-cyan-500/40 bg-cyan-500/10'
-                  : 'border-white/5 bg-white/5 opacity-40'
-              }`}
-            >
-              <div className="mb-4 flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-400">
-                  <Zap size={20} />
-                </span>
-                <span className="text-lg font-semibold text-white">Automated Cleaning</span>
-              </div>
-              <ul className="space-y-3">
-                {automatedSteps.map((step, i) => (
-                  <motion.li
-                    key={i}
-                    initial={{ opacity: 0, x: 15 }}
-                    animate={
-                      activeComparison === 'automated' && isInView
-                        ? { opacity: 1, x: 0 }
-                        : { opacity: 0.4, x: 0 }
-                    }
-                    transition={{ delay: i * 0.08 }}
-                    className="flex items-center gap-3 text-sm text-white/70"
-                  >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-cyan-500/40 bg-cyan-500/20 text-xs font-bold text-cyan-400">
-                      {i + 1}
-                    </span>
-                    {step.label}
-                  </motion.li>
-                ))}
-              </ul>
-              <div className="mt-5 rounded-xl border border-cyan-500/20 bg-cyan-500/10 p-3 text-xs text-cyan-300">
-                ✅ Operates 24/7 without manual intervention, reducing labour costs and
-                improving safety.
-              </div>
+            <div className="p-3 rounded-xl bg-white/5">
+              <span className="text-red-400 font-bold block mb-1">2. Algae Explosion</span>
+              <span className="text-white/70">Massive algal blooms blanket pond surface, starving underwater plants of solar rays.</span>
+            </div>
+            <div className="p-3 rounded-xl bg-white/5">
+              <span className="text-red-400 font-bold block mb-1">3. Dissolved O2 Depletion</span>
+              <span className="text-white/70">Dying algae triggers bacterial frenzy, crashing dissolved oxygen down to zero (hypoxia).</span>
+            </div>
+            <div className="p-3 rounded-xl bg-white/5">
+              <span className="text-red-400 font-bold block mb-1">4. Community Resource Lost</span>
+              <span className="text-white/70">Total fish kill, foul gas releases, toxic cyanotoxins, and unpotable irrigation water.</span>
             </div>
           </div>
         </motion.div>

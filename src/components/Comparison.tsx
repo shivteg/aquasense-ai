@@ -1,18 +1,8 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import {
-  UserX,
-  Bot,
-  AlertTriangle,
   CheckCircle2,
-  Clock,
-  Zap,
-  TrendingDown,
-  TrendingUp,
-  ShieldCheck,
-  Eye,
-  RefreshCw,
-  SlidersHorizontal,
+  Scale,
 } from 'lucide-react';
 
 interface ComparisonProps {
@@ -22,376 +12,216 @@ interface ComparisonProps {
 interface ComparisonDimension {
   title: string;
   category: string;
-  manual: {
+  traditional: {
+    title: string;
     description: string;
     points: string[];
-    risk: 'High' | 'Severe' | 'Moderate';
+    risk: 'Severe' | 'High' | 'Critical';
   };
-  automated: {
+  aquasense: {
+    title: string;
     description: string;
     points: string[];
     advantage: string;
   };
 }
 
-const comparisonData: ComparisonDimension[] = [
+const comparisonDimensions: ComparisonDimension[] = [
   {
-    title: 'Waste Removal Process',
+    title: 'Pond Surface Remediation',
     category: 'Operational Method',
-    manual: {
-      description: 'Human-dependent waste removal using manual rake tools directly at intake channels.',
+    traditional: {
+      title: 'Manual Netting & Chemical Algicides',
+      description: 'Workers haul rotting scum using hand nets or spray copper-sulfate algicides that poison aquatic life.',
       points: [
-        'Requires continuous physical presence of human operators at wet-well edge',
-        'Physical strain and repetitive stooping/lifting of heavy waterlogged debris',
-        'Direct biohazard and pathogen exposure from untreated waste and raw sewage',
+        'Dangerous physical labor at slippery, steep pond embankments',
+        'Direct human skin contact with toxic cyanobacteria microcystins',
+        'Chemical algicides cause mass copper toxicity and sudden oxygen collapse',
       ],
       risk: 'Severe',
     },
-    automated: {
-      description: 'Mechanically assisted waste removal via automated reciprocating rakes and conveyor belts.',
+    aquasense: {
+      title: 'AquaClean Autonomous Robotics',
+      description: 'Dual-pontoon autonomous robot harvesting surface algae and plastics without worker hazard.',
       points: [
-        'Motorised stainless-steel rakes autonomously extract captured solids',
-        'Zero manual physical handling of wet floating debris during standard operation',
-        'Safe, enclosed mechanical transmission compliant with industrial safety standards',
+        'Zero manual handling of wet floating debris during standard operation',
+        'Continuous rotating mesh conveyor separates water from solids mechanically',
+        'Shallow 12 cm draft operates without disturbing delicate pond bed ecology',
       ],
-      advantage: 'Mechanically Assisted & Safer',
+      advantage: 'Autonomous & Safe',
     },
   },
   {
-    title: 'Labor Allocation & Ergonomics',
-    category: 'Workforce Impact',
-    manual: {
-      description: 'Repetitive, strenuous manual labour with high risk of musculoskeletal injury.',
+    title: 'Algae Biomass Fate',
+    category: 'Resource Recovery',
+    traditional: {
+      title: 'Landfill Dumping & Anaerobic Putrefaction',
+      description: 'Raked weeds and algae are dumped in roadside pits, rotting anaerobically and breeding mosquitoes.',
       points: [
-        'Staff diverted from water quality testing to heavy repetitive debris scraping',
-        'Fatigue-related productivity declines during monsoon surges and storm floods',
-        'High worker turnover due to unpleasant and strenuous working conditions',
+        'Foul volatile sulphur and methane gas emissions during uncontrolled rotting',
+        'Leachate seeps back into groundwater tables, causing secondary contamination',
+        'Complete forfeiture of dense photosynthetic nitrogen and phosphorus',
       ],
       risk: 'High',
     },
-    automated: {
-      description: 'Reduced repetitive physical labour; shifts workforce focus to supervisory plant management.',
+    aquasense: {
+      title: 'AquaFert Controlled Thermophilic Composting',
+      description: 'Upcycled into certified organic soil amendments through stoichiometric C:N blending.',
       points: [
-        'Staff repurposed to technical oversight, preventive maintenance, and water quality analysis',
-        'Consistent mechanical duty cycle immune to human fatigue during emergency storms',
-        'Substantially improved workplace safety, dignified labor, and operator satisfaction',
+        'Blended with dry straw to achieve optimal 25:1 to 30:1 aerobic C:N ratio',
+        'Thermophilic heat (55–65°C) sanitizes weed seeds and biological pathogens',
+        'Produces rich organic humus reducing local farmer reliance on synthetic NPK',
       ],
-      advantage: 'Reduced Repetitive Labour',
+      advantage: '100% Resource Recovery',
     },
   },
   {
-    title: 'Surveillance & Condition Monitoring',
-    category: 'System Awareness',
-    manual: {
-      description: 'Manual periodic monitoring relying solely on sporadic physical inspections.',
+    title: 'Water Treatment & Reuse',
+    category: 'Water Quality',
+    traditional: {
+      title: 'Stagnant Water Left Unusable',
+      description: 'Pond remains choked with suspended colloids and enteric pathogens, unfit for irrigation or animals.',
       points: [
-        'Blockages often noticed only after significant upstream water level rises occur',
-        'Night shifts and inclement weather result in delayed emergency responses',
-        'Zero historical digital data logging of debris accumulation rates or water surges',
+        'No multi-stage physical, chemical or microbiological purification',
+        'Farmers forced to pump depleting deep borewells at high diesel/electric cost',
+        'Periodic toxic algae blooms poison local village livestock',
       ],
-      risk: 'High',
+      risk: 'Critical',
     },
-    automated: {
-      description: 'Sensor-assisted real-time monitoring with automated alerts and telemetry.',
+    aquasense: {
+      title: 'AquaPure Multi-Barrier 7-Stage Train',
+      description: 'Clarification, sand/carbon filtration, and UV-C disinfection for verified safe reuse.',
       points: [
-        'Ultrasonic and hydrostatic sensors monitor water head-loss across the screen 24/7',
-        'Automated early warnings triggered before critical hydraulic overflows happen',
-        'Continuous data telemetry feeds real-time status to the central plant dashboard',
+        '7-stage scientific train: screening, coagulation, lamella clarifier, sand, carbon, UV-C',
+        '99.99% pathogen inactivation without dangerous chlorine disinfection byproducts',
+        'Verified safe for unrestricted crop drip irrigation and aquifer recharge',
       ],
-      advantage: 'Sensor-Assisted 24/7 Telemetry',
-    },
-  },
-  {
-    title: 'Waste Transfer & Disposal',
-    category: 'Logistics',
-    manual: {
-      description: 'Manual waste transfer requiring physical shoveling, wheelbarrows, and open hauling.',
-      points: [
-        'Debris manually piled onto catwalks before being carted to dumpsters',
-        'Odor emission, vectors, and wet sludge leakage onto walkways create slip hazards',
-        'Irregular clearing cycles lead to overflow around intake screens',
-      ],
-      risk: 'Moderate',
-    },
-    automated: {
-      description: 'Automated waste transfer directly into sealed, designated collection bins.',
-      points: [
-        'Integrated mechanical chute and screw/belt conveyor routes waste straight to bins',
-        'Contained collection minimizes odor and eliminates slippery sludge on catwalks',
-        'Level-monitored bins notify operators when container swap is required',
-      ],
-      advantage: 'Automated Sealed Transfer',
+      advantage: 'Verified Multi-Barrier Reuse',
     },
   },
 ];
 
-export default function Comparison({ darkMode }: ComparisonProps) {
+export default function Comparison({ darkMode: _darkMode }: ComparisonProps) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
-  const [activeTab, setActiveTab] = useState<number>(0);
 
   return (
     <section
       id="comparison"
       ref={ref}
-      className={`relative section-padding overflow-hidden transition-colors duration-300 ${
-        darkMode ? 'bg-[#060d1a]' : 'bg-[#f0f9ff]/70'
-      }`}
+      className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#0a1628] via-[#091b35] to-[#0a1628] overflow-hidden"
     >
-      {/* Decorative background glows */}
-      <div className="absolute top-1/4 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-widest mb-4"
+          >
+            <Scale className="w-3.5 h-3.5" />
+            Rigorous Paradigm Comparison
+          </motion.div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 mb-4">
-            <SlidersHorizontal size={14} />
-            Comparative Paradigm Analysis
-          </div>
-          <h2
-            className={`text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 ${
-              darkMode ? 'text-white' : 'text-[#0a1628]'
-            }`}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-6"
             style={{ fontFamily: 'Poppins, sans-serif' }}
           >
-            Manual vs Proposed <span className="gradient-text">Automated System</span>
-          </h2>
-          <p
-            className={`text-base sm:text-lg leading-relaxed ${
-              darkMode ? 'text-white/60' : 'text-slate-600'
-            }`}
-          >
-            A clear comparison examining operational bottlenecks in conventional manual water intake screening
-            versus our proposed automated, sensor-guided approach.
-          </p>
-        </motion.div>
+            Traditional Remediation vs.{' '}
+            <span className="gradient-text">AquaSense</span>
+          </motion.h2>
 
-        {/* Dimension Selector Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-10">
-          {comparisonData.map((item, idx) => (
-            <button
-              key={item.title}
-              onClick={() => setActiveTab(idx)}
-              className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer ${
-                activeTab === idx
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-[0_8px_20px_rgba(6,182,212,0.35)] scale-105'
-                  : darkMode
-                  ? 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10'
-                  : 'bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900 border border-slate-200 shadow-sm'
-              }`}
-            >
-              {item.title}
-            </button>
-          ))}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-base sm:text-lg text-white/70 leading-relaxed"
+          >
+            See how AquaSense replaces hazardous manual labor and wasteful disposal with an
+            integrated, autonomous circular technology system.
+          </motion.p>
         </div>
 
-        {/* Selected Dimension Split Card */}
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-14"
-        >
-          {/* Manual Card (Current Practice) */}
-          <div
-            className={`relative rounded-3xl p-7 sm:p-9 border transition-all duration-300 ${
-              darkMode
-                ? 'bg-gradient-to-br from-[#121b2d] to-[#0a1424] border-red-500/25 shadow-[0_15px_35px_rgba(239,68,68,0.08)]'
-                : 'bg-white border-red-300 shadow-lg'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
-                  <UserX size={26} />
-                </div>
+        {/* Comparison Dimensions */}
+        <div className="space-y-8">
+          {comparisonDimensions.map((dim, idx) => (
+            <motion.div
+              key={dim.title}
+              initial={{ opacity: 0, y: 30 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.3 + idx * 0.1 }}
+              className="rounded-3xl bg-slate-900/80 border border-white/10 backdrop-blur-xl p-6 sm:p-8 shadow-2xl overflow-hidden"
+            >
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
                 <div>
-                  <span className="text-xs font-semibold tracking-wider uppercase text-red-400">Conventional Baseline</span>
-                  <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-[#0a1628]'}`}>
-                    Manual Operation
+                  <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest">
+                    {dim.category}
+                  </span>
+                  <h3 className="text-xl sm:text-2xl font-bold text-white mt-0.5">
+                    {dim.title}
                   </h3>
                 </div>
               </div>
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-red-500/15 text-red-400 border border-red-500/30">
-                Risk: {comparisonData[activeTab].manual.risk}
-              </span>
-            </div>
 
-            <p className={`text-sm sm:text-base mb-6 leading-relaxed ${darkMode ? 'text-white/70' : 'text-slate-600'}`}>
-              {comparisonData[activeTab].manual.description}
-            </p>
-
-            <div className="space-y-3.5 mb-6">
-              {comparisonData[activeTab].manual.points.map((pt, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <div className="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center text-xs font-bold">
-                    ✕
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Traditional Column */}
+                <div className="p-6 rounded-2xl bg-red-950/25 border border-red-500/30 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-mono font-bold text-red-400 uppercase tracking-wider">
+                        Traditional / Manual Method
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-red-500/20 text-red-300 border border-red-500/30">
+                        {dim.traditional.risk} Risk
+                      </span>
+                    </div>
+                    <h4 className="text-lg font-bold text-white mb-2">{dim.traditional.title}</h4>
+                    <p className="text-xs sm:text-sm text-white/70 leading-relaxed mb-4">
+                      {dim.traditional.description}
+                    </p>
+                    <div className="space-y-2">
+                      {dim.traditional.points.map((pt, i) => (
+                        <div key={i} className="flex items-start gap-2 text-xs text-white/70">
+                          <span className="text-red-400 font-bold shrink-0">✗</span>
+                          <span>{pt}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <span className={`text-sm leading-relaxed ${darkMode ? 'text-white/80' : 'text-slate-700'}`}>
-                    {pt}
-                  </span>
                 </div>
-              ))}
-            </div>
 
-            <div className={`p-4 rounded-2xl border ${darkMode ? 'bg-red-500/5 border-red-500/20' : 'bg-red-50 border-red-200'}`}>
-              <div className="flex items-center gap-2 text-xs font-bold uppercase text-red-400 mb-1">
-                <AlertTriangle size={14} /> Operational Drawback
-              </div>
-              <p className={`text-xs sm:text-sm ${darkMode ? 'text-white/60' : 'text-slate-600'}`}>
-                Heavy dependency on human stamina, prone to unscheduled overflow delays and repetitive strain injuries.
-              </p>
-            </div>
-          </div>
-
-          {/* Automated Card (Proposed AquaClean AI) */}
-          <div
-            className={`relative rounded-3xl p-7 sm:p-9 border transition-all duration-300 ${
-              darkMode
-                ? 'bg-gradient-to-br from-[#0c233c] to-[#081b2e] border-cyan-400/40 shadow-[0_20px_50px_rgba(6,182,212,0.18)]'
-                : 'bg-white border-cyan-400 shadow-xl'
-            }`}
-          >
-            <div className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-extrabold uppercase bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-md">
-              Proposed Innovation
-            </div>
-
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center text-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.4)]">
-                <Bot size={26} />
-              </div>
-              <div>
-                <span className="text-xs font-semibold tracking-wider uppercase text-cyan-400">AquaClean AI Architecture</span>
-                <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-[#0a1628]'}`}>
-                  Automated System
-                </h3>
-              </div>
-            </div>
-
-            <p className={`text-sm sm:text-base mb-6 leading-relaxed ${darkMode ? 'text-cyan-100/90' : 'text-slate-700'}`}>
-              {comparisonData[activeTab].automated.description}
-            </p>
-
-            <div className="space-y-3.5 mb-6">
-              {comparisonData[activeTab].automated.points.map((pt, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <div className="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-cyan-500/25 text-cyan-300 flex items-center justify-center text-xs font-bold">
-                    ✓
+                {/* AquaSense Column */}
+                <div className="p-6 rounded-2xl bg-emerald-950/25 border border-emerald-500/40 flex flex-col justify-between shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">
+                        AquaSense Closed-Loop
+                      </span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        {dim.aquasense.advantage}
+                      </span>
+                    </div>
+                    <h4 className="text-lg font-bold text-white mb-2">{dim.aquasense.title}</h4>
+                    <p className="text-xs sm:text-sm text-white/70 leading-relaxed mb-4">
+                      {dim.aquasense.description}
+                    </p>
+                    <div className="space-y-2">
+                      {dim.aquasense.points.map((pt, i) => (
+                        <div key={i} className="flex items-start gap-2 text-xs text-white/80">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                          <span>{pt}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <span className={`text-sm leading-relaxed ${darkMode ? 'text-white/90' : 'text-slate-800'}`}>
-                    {pt}
-                  </span>
                 </div>
-              ))}
-            </div>
-
-            <div className={`p-4 rounded-2xl border ${darkMode ? 'bg-cyan-500/10 border-cyan-400/30' : 'bg-cyan-50 border-cyan-200'}`}>
-              <div className="flex items-center gap-2 text-xs font-bold uppercase text-cyan-400 mb-1">
-                <CheckCircle2 size={14} /> Key Innovation Advantage
               </div>
-              <p className={`text-xs sm:text-sm ${darkMode ? 'text-cyan-100/80' : 'text-slate-700'}`}>
-                {comparisonData[activeTab].automated.advantage}: Continuous autonomous mechanical action guided by telemetry sensors.
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Conceptual Comparison Metric Matrix */}
-        <div
-          className={`rounded-3xl p-6 sm:p-8 border ${
-            darkMode ? 'bg-[#0a1628]/80 border-white/10' : 'bg-white border-slate-200 shadow-md'
-          }`}
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <h4 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-[#0a1628]'}`}>
-                Conceptual Operational Comparison Matrix
-              </h4>
-              <p className={`text-xs sm:text-sm ${darkMode ? 'text-white/50' : 'text-slate-500'}`}>
-                Qualitative operational profiles comparing conventional manual cleaning vs proposed automated screening.
-              </p>
-            </div>
-            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 self-start sm:self-auto">
-              Simulated Conceptual Index
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className={`p-4 rounded-2xl border ${darkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-100'}`}>
-              <div className="flex items-center justify-between mb-2">
-                <span className={`text-xs font-semibold uppercase ${darkMode ? 'text-white/60' : 'text-slate-500'}`}>
-                  Manual Labour Intensity
-                </span>
-                <TrendingDown className="text-emerald-400" size={18} />
-              </div>
-              <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-2xl font-black text-emerald-400">Substantially Lower</span>
-              </div>
-              <p className={`text-xs ${darkMode ? 'text-white/50' : 'text-slate-500'}`}>
-                Mechanical rakes replace repetitive human bending and physical debris hauling.
-              </p>
-            </div>
-
-            <div className={`p-4 rounded-2xl border ${darkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-100'}`}>
-              <div className="flex items-center justify-between mb-2">
-                <span className={`text-xs font-semibold uppercase ${darkMode ? 'text-white/60' : 'text-slate-500'}`}>
-                  Cleaning Frequency
-                </span>
-                <TrendingUp className="text-cyan-400" size={18} />
-              </div>
-              <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-2xl font-black text-cyan-400">Continuous / On-Demand</span>
-              </div>
-              <p className={`text-xs ${darkMode ? 'text-white/50' : 'text-slate-500'}`}>
-                Sensor triggers raking as debris accumulates, preventing buildup blankets.
-              </p>
-            </div>
-
-            <div className={`p-4 rounded-2xl border ${darkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-100'}`}>
-              <div className="flex items-center justify-between mb-2">
-                <span className={`text-xs font-semibold uppercase ${darkMode ? 'text-white/60' : 'text-slate-500'}`}>
-                  Operational Visibility
-                </span>
-                <Eye className="text-blue-400" size={18} />
-              </div>
-              <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-2xl font-black text-blue-400">Live 24/7 Telemetry</span>
-              </div>
-              <p className={`text-xs ${darkMode ? 'text-white/50' : 'text-slate-500'}`}>
-                Head-loss levels, bin capacity, and motor statuses streamed to central UI.
-              </p>
-            </div>
-
-            <div className={`p-4 rounded-2xl border ${darkMode ? 'bg-white/5 border-white/5' : 'bg-slate-50 border-slate-100'}`}>
-              <div className="flex items-center justify-between mb-2">
-                <span className={`text-xs font-semibold uppercase ${darkMode ? 'text-white/60' : 'text-slate-500'}`}>
-                  Worker Safety Profile
-                </span>
-                <ShieldCheck className="text-teal-400" size={18} />
-              </div>
-              <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-2xl font-black text-teal-400">Significantly Elevated</span>
-              </div>
-              <p className={`text-xs ${darkMode ? 'text-white/50' : 'text-slate-500'}`}>
-                Eliminates slip, fall, and biological contamination hazards at open channel edges.
-              </p>
-            </div>
-          </div>
-
-          {/* Scientific Disclaimer Note */}
-          <div className="mt-6 pt-4 border-t border-white/10 flex items-center gap-3">
-            <span className="text-amber-400 text-xs">⚠️</span>
-            <p className={`text-xs italic ${darkMode ? 'text-white/50' : 'text-slate-500'}`}>
-              Scientific Note: Comparative evaluations represent conceptual engineering paradigms. No absolute cost or percentage savings are claimed prior to certified empirical plant pilot trials.
-            </p>
-          </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

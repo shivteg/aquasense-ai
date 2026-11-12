@@ -1,15 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  ShieldAlert,
-  CheckCircle2,
-  AlertTriangle,
-  FileText,
-  Scale,
-  Cpu,
-  Droplet,
   ChevronDown,
-  ChevronUp,
+  Scale,
 } from 'lucide-react';
 
 interface ScientificAccuracyProps {
@@ -27,70 +20,42 @@ interface RuleItem {
 const scientificRules: RuleItem[] = [
   {
     id: 1,
-    title: 'Solid Waste Capture vs. Dissolved Pollutants',
+    title: 'Surface Skimming vs. Dissolved Solutes & Microbes',
     badge: 'Filtration Boundary',
-    summary:
-      'Mechanical bar screens capture floating and suspended physical debris (bottles, branches, bags, leaves) but do not remove chemical solutes or microscopic dissolved organics.',
-    expandedExplanation:
-      'Coarse mechanical bar screening serves strictly as physical pretreatment. Micro-pollutants, heavy metal ions, nitrogen/phosphorus compounds, pesticides, and industrial dissolved organics bypass bar screens completely and must be treated through downstream chemical coagulation, flocculation, settling, and biological aeration basins.',
+    summary: 'The AquaClean floating robot captures surface algae mats and floating plastics; it does not remove dissolved chemical solutes or microscopic pathogens directly from the water column.',
+    expandedExplanation: 'Surface harvesting is purely physical extraction of floating debris. Dissolved pesticides, nitrogen/phosphorus ions, and enteric microbes bypass surface screening and require the downstream chemical coagulation, lamella settling, granular activated carbon adsorption, and UV-C disinfection of the AquaPure unit.',
   },
   {
     id: 2,
-    title: 'Screening is Only One Stage of Water Treatment',
-    badge: 'Process Architecture',
-    summary:
-      'Automated screening represents primary physical pretreatment — the very first protective gate in a comprehensive multi-barrier treatment facility.',
-    expandedExplanation:
-      'A full municipal wastewater or surface water treatment train consists of (1) Preliminary screening & grit removal, (2) Primary clarification, (3) Secondary biological digestion / activated sludge, (4) Tertiary sand/membrane filtration, and (5) Disinfection (chlorination or ultraviolet irradiation). AquaClean AI optimizes Stage 1 to protect subsequent stages from choking.',
+    title: 'No Instant Potable Drinking Water Claim',
+    badge: 'Potability Guardrail',
+    summary: 'AquaSense does not claim that pond water becomes immediately safe for human drinking after surface skimming or basic filtration.',
+    expandedExplanation: 'Effluent leaving AquaPure is verified and allocated for unrestricted drip agricultural irrigation and wetland replenishment. Human potable consumption requires certified secondary treatment (such as high-pressure reverse osmosis / nanofiltration) and certified laboratory validation against national standards (BIS IS 10500 in India, WHO Guidelines).',
   },
   {
     id: 3,
-    title: 'AI Role: Detection & Classification, Not Physical Collection',
-    badge: 'AI Demarcation',
-    summary:
-      'AI and computer vision models identify and classify visible waste on water surfaces; physical removal is carried out purely by mechanical rakes, chains, and conveyors.',
-    expandedExplanation:
-      'Our AI computer vision models (e.g. YOLO edge detectors) process camera feeds to quantify waste density, categorize debris types (leaves vs. plastics), and evaluate accumulation rates. The AI triggers mechanical actuators or informs operators; it is never described as physically grabbing or removing debris.',
+    title: 'Algal Toxicity & Harmful Algal Bloom (HAB) Screening',
+    badge: 'Biohazard Protocol',
+    summary: 'Not every algae species is suitable for fertilizer production; biomass potentially containing cyanotoxins or heavy metals must be screened and tested.',
+    expandedExplanation: 'Certain blue-green algae (e.g. Microcystis aeruginosa) synthesize hepatotoxins (microcystins) that can persist in soil and accumulate in food crops. AquaFert mandates rapid ELISA toxin screening and hot thermophilic composting (≥ 55°C) to denature proteins and ensure compost safety before farm application.',
   },
   {
     id: 4,
-    title: 'Sensors Monitor Operating Conditions',
-    badge: 'Telemetry & IoT',
-    summary:
-      'Ultrasonic depth sensors, differential head-loss probes, and motor torque monitors continuously measure channel dynamics to guide mechanical action.',
-    expandedExplanation:
-      'Sensors assess physical variables including upstream/downstream water elevation differential, channel velocity, debris bed thickness, motor current draw, and bin fill percentage. They do not alter water chemistry directly but supply feedback loops for automated motor raking cycles.',
+    title: 'Transparent Demonstration Telemetry & Simulated Data',
+    badge: 'Data Integrity',
+    summary: 'All real-time dashboard telemetry, graph streams, and pond simulations on this platform are browser-rendered demonstration models.',
+    expandedExplanation: 'Telemetry values are derived from calibrated limnological formulas and empirical robot design specifications. For this competition showcase, all values are dynamically simulated on the client side and clearly labeled as demonstration telemetry to avoid misrepresenting simulation as live physical sensor feeds.',
   },
   {
     id: 5,
-    title: 'No Drinking Water Claim',
-    badge: 'Potability Guardrail',
-    summary:
-      'AquaClean AI makes zero claim of producing potable drinking water by itself.',
-    expandedExplanation:
-      'Effluent leaving the automated screening channel is mechanically strained raw water. It still contains pathogenic bacteria (E. coli, coliforms), suspended colloids, viruses, and dissolved chemicals. Drinking water production requires extensive downstream multi-barrier purification, reverse osmosis or nanofiltration, and certified disinfection.',
-  },
-  {
-    id: 6,
-    title: 'Conceptual Simulations & Demonstration Data',
-    badge: 'Transparency',
-    summary:
-      'All interactive visual simulations, graphs, numerical counters, and dashboard gauges on this platform are browser-generated demonstrations.',
-    expandedExplanation:
-      'Simulation parameters are derived from hydraulic engineering formulas and empirical screening design guidelines, but real-time numbers shown on the website are dynamically generated client-side for demonstration and educational purposes, clearly labeled as simulated telemetry.',
-  },
-  {
-    id: 7,
-    title: 'Engineering Implementation Requirements',
-    badge: 'Real-World Path',
-    summary:
-      'Real-world physical realization requires certified hydraulic engineering, structural finite element modeling, safety interlocks, and capital expenditure analysis.',
-    expandedExplanation:
-      'Deploying an automated screening facility in a municipal river intake requires detailed channel bathymetry, civil concrete flume construction, ATEX explosion-proof electrical certification, emergency stop dead-man interlocks, corrosion-resistant metallurgy (316L stainless steel), and local environmental impact assessments.',
+    title: 'Stoichiometric C:N Ratio in Composting',
+    badge: 'Biological Rigor',
+    summary: 'Raw algae cannot be composted alone without high-carbon bulking agents without releasing noxious ammonia gas.',
+    expandedExplanation: 'Pure algae has a narrow C:N ratio (~8:1 to 10:1). Aerobic heterotrophic bacteria require 25:1 to 30:1 for balanced cellular synthesis and respiration. AquaFert blends dewatered algae with dry carbonaceous matter (straw/leaves) to maintain hot aerobic composting without odor or nitrogen loss.',
   },
 ];
 
-export default function ScientificAccuracy({ darkMode }: ScientificAccuracyProps) {
+export default function ScientificAccuracy({ darkMode: _darkMode }: ScientificAccuracyProps) {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const toggleExpand = (id: number) => {
@@ -100,129 +65,73 @@ export default function ScientificAccuracy({ darkMode }: ScientificAccuracyProps
   return (
     <section
       id="scientific-accuracy"
-      className={`relative section-padding border-t transition-colors duration-300 ${
-        darkMode ? 'bg-[#081220] border-white/10' : 'bg-[#eef6ff] border-cyan-200'
-      }`}
+      className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#0a1628] via-[#0b1b30] to-[#0a1628] border-t border-white/10"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400 mb-4">
-            <Scale size={14} />
-            Scientific Accuracy & Rigor
+      <div className="max-w-5xl mx-auto relative z-10">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-widest mb-3">
+            <Scale className="w-3.5 h-3.5" />
+            Scientific Accuracy & Rigor Notice
           </div>
-          <h2
-            className={`text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight mb-4 ${
-              darkMode ? 'text-white' : 'text-[#0a1628]'
-            }`}
-            style={{ fontFamily: 'Poppins, sans-serif' }}
-          >
-            Engineering Demarcation & <span className="gradient-text">Scientific Accuracy</span>
-          </h2>
-          <p
-            className={`text-sm sm:text-base leading-relaxed ${
-              darkMode ? 'text-white/60' : 'text-slate-600'
-            }`}
-          >
-            In compliance with national innovation competition standards, AquaClean AI strictly distinguishes between
-            conceptual simulation, proposed technological innovation, and established municipal water engineering principles.
+          <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            Academic Guardrails & Operational Demarcation
+          </h3>
+          <p className="text-xs sm:text-sm text-white/70 max-w-2xl mx-auto leading-relaxed">
+            In accordance with engineering integrity and scientific accuracy guidelines for the LPU Innovation
+            Competition, we clearly demarcate theoretical principles, physical capabilities, and safety boundaries.
           </p>
         </div>
 
-        {/* 7 Rules Cards Accordion/Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+        <div className="space-y-4">
           {scientificRules.map((rule) => {
             const isExpanded = expandedId === rule.id;
             return (
               <div
                 key={rule.id}
-                className={`rounded-2xl p-5 border transition-all duration-300 flex flex-col justify-between ${
-                  darkMode
-                    ? 'bg-[#0b1a2d] border-white/10 hover:border-cyan-500/40'
-                    : 'bg-white border-slate-200 shadow-sm hover:border-cyan-400'
-                }`}
+                className="rounded-2xl bg-slate-900/80 border border-white/10 p-5 backdrop-blur-xl transition-all"
               >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 text-xs font-bold flex items-center justify-center">
-                      #{rule.id}
+                <div
+                  onClick={() => toggleExpand(rule.id)}
+                  className="flex items-center justify-between gap-4 cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
+                      {rule.id}
                     </span>
-                    <span
-                      className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
-                        darkMode ? 'bg-white/5 text-cyan-300' : 'bg-cyan-50 text-cyan-700'
-                      }`}
-                    >
-                      {rule.badge}
-                    </span>
+                    <div>
+                      <span className="text-[10px] font-mono uppercase text-cyan-400 px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 mr-2">
+                        {rule.badge}
+                      </span>
+                      <span className="text-sm sm:text-base font-bold text-white">
+                        {rule.title}
+                      </span>
+                    </div>
                   </div>
 
-                  <h3
-                    className={`text-base font-bold mb-2 ${
-                      darkMode ? 'text-white' : 'text-[#0a1628]'
+                  <ChevronDown
+                    className={`w-4 h-4 text-white/60 transition-transform duration-300 shrink-0 ${
+                      isExpanded ? 'rotate-180' : ''
                     }`}
-                  >
-                    {rule.title}
-                  </h3>
-
-                  <p
-                    className={`text-xs leading-relaxed mb-4 ${
-                      darkMode ? 'text-white/70' : 'text-slate-600'
-                    }`}
-                  >
-                    {rule.summary}
-                  </p>
-
-                  {isExpanded && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className={`mt-2 pt-3 border-t text-xs leading-relaxed ${
-                        darkMode ? 'border-white/10 text-cyan-200/80' : 'border-slate-100 text-slate-700'
-                      }`}
-                    >
-                      {rule.expandedExplanation}
-                    </motion.div>
-                  )}
+                  />
                 </div>
 
-                <button
-                  onClick={() => toggleExpand(rule.id)}
-                  className={`mt-3 pt-2 text-xs font-semibold flex items-center gap-1 cursor-pointer transition-colors ${
-                    darkMode ? 'text-cyan-400 hover:text-cyan-300' : 'text-cyan-700 hover:text-cyan-900'
-                  }`}
-                >
-                  {isExpanded ? (
-                    <>
-                      Show Less <ChevronUp size={13} />
-                    </>
-                  ) : (
-                    <>
-                      Read Engineering Notes <ChevronDown size={13} />
-                    </>
-                  )}
-                </button>
+                <div className="text-xs text-white/70 leading-relaxed mt-2 pl-9">
+                  {rule.summary}
+                </div>
+
+                {isExpanded && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-3 pt-3 border-t border-white/10 text-xs text-white/80 leading-relaxed pl-9 bg-white/5 p-3 rounded-xl"
+                  >
+                    {rule.expandedExplanation}
+                  </motion.div>
+                )}
               </div>
             );
           })}
-        </div>
-
-        {/* Competition Certification Banner */}
-        <div
-          className={`rounded-2xl p-5 border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs ${
-            darkMode
-              ? 'bg-cyan-950/20 border-cyan-500/30 text-cyan-200'
-              : 'bg-white border-cyan-200 text-slate-700 shadow-sm'
-          }`}
-        >
-          <div className="flex items-center gap-3">
-            <CheckCircle2 size={18} className="text-cyan-400 flex-shrink-0" />
-            <span>
-              <strong>Scientific Transparency Verified:</strong> All conceptual diagrams, mechanical flow stages, and sensor gauges are clearly denoted as simulated representations for research and evaluation.
-            </span>
-          </div>
-          <span className="px-3 py-1 rounded-full font-bold uppercase text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 whitespace-nowrap">
-            Zero Unsubstantiated Claims
-          </span>
         </div>
       </div>
     </section>

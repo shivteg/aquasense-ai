@@ -1,445 +1,299 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import {
+  Beaker,
+  CheckCircle2,
   Droplets,
-  Filter,
-  Cog,
+  Layers,
+  Sparkles,
+  Sprout,
   Trash2,
-  CheckCircle,
-  Wifi,
-  ChevronRight,
-  X,
-  ArrowRight,
+  Waves,
+  Zap,
 } from 'lucide-react';
 
-interface Stage {
-  id: number;
-  title: string;
-  shortTitle: string;
-  icon: React.ReactNode;
+interface ProcessNode {
+  id: string;
+  stepNum: string;
+  name: string;
+  unit: string;
+  whatHappens: string;
+  technologyUsed: string;
+  scientificPrinciple: string;
+  outputProduced: string;
   color: string;
-  glowColor: string;
-  description: string;
-  details: string[];
-  animation: string;
+  borderColor: string;
+  accent: string;
+  icon: React.ReactNode;
 }
 
-const stages: Stage[] = [
+const flowNodes: ProcessNode[] = [
   {
-    id: 1,
-    title: 'Water Inlet',
-    shortTitle: 'Inlet',
-    icon: <Droplets className="w-7 h-7" />,
-    color: 'from-blue-500 to-cyan-400',
-    glowColor: 'rgba(6,182,212,0.6)',
-    description: 'Polluted water enters the treatment plant from rivers, canals, or municipal sources.',
-    details: [
-      'Raw, untreated water flows into the intake channel at controlled rates.',
-      'The inlet gate regulates flow based on plant capacity.',
-      'Initial screening begins at the entrance to prevent large objects.',
-      'Flow sensors measure and log water volume in real time.',
-      'Emergency shutoff valves protect the plant during overflow events.',
-    ],
-    animation: 'water-flow',
+    id: 'pond',
+    stepNum: '01',
+    name: 'POND ECOSYSTEM',
+    unit: 'Natural Catchment',
+    whatHappens: 'A freshwater pond degraded by agricultural fertiliser runoff, floating plastic waste, and thick cyanobacteria blooms requires active intervention.',
+    technologyUsed: 'Environmental baseline sensor logging (Turbidity, DO, pH probes).',
+    scientificPrinciple: 'Ecosystem Dynamics & Limnology of Eutrophic Waters',
+    outputProduced: 'Monitored polluted water body earmarked for closed-loop remediation.',
+    color: 'from-blue-600/20 to-blue-900/10',
+    borderColor: 'border-blue-500/40',
+    accent: 'text-blue-400',
+    icon: <Waves className="w-5 h-5" />,
   },
   {
-    id: 2,
-    title: 'Mechanical Screening',
-    shortTitle: 'Screen',
-    icon: <Filter className="w-7 h-7" />,
-    color: 'from-cyan-500 to-teal-400',
-    glowColor: 'rgba(20,184,166,0.6)',
-    description: 'Bar screens capture floating solid waste — leaves, plastic bottles, wrappers and debris.',
-    details: [
-      'Parallel steel bars spaced 20–50 mm apart intercept solid waste.',
-      'Screen inclination angle (60–80°) allows gravity-assisted self-cleaning.',
-      'High-tensile stainless steel resists corrosion in wastewater environments.',
-      'Multiple screen passes (coarse → fine) catch progressively smaller particles.',
-      'Differential pressure sensors detect screen blockage requiring rake activation.',
-    ],
-    animation: 'screen-pulse',
+    id: 'aquaclean',
+    stepNum: '02',
+    name: 'AQUACLEAN HARVESTING',
+    unit: 'Unit A (Floating Robot)',
+    whatHappens: 'The autonomous dual-pontoon robot cruises the pond surface, using convergent guide vanes and an inclined rotating wire mesh conveyor to scoop floating algae mats, plastic bottles, and leaves.',
+    technologyUsed: 'ESP32 microcontroller, differential DC propellers, ultrasonic sonar, 2.5mm mesh conveyor.',
+    scientificPrinciple: "Archimedes' Buoyancy, Newton's 3rd Law of Motion, and Mechanical Sieve Filtration.",
+    outputProduced: 'Harvested mixed surface catch (wet algae slurry, plastics, floating organic matter).',
+    color: 'from-cyan-500/20 to-cyan-900/10',
+    borderColor: 'border-cyan-500/40',
+    accent: 'text-cyan-400',
+    icon: <Zap className="w-5 h-5" />,
   },
   {
-    id: 3,
-    title: 'Automated Rake',
-    shortTitle: 'Rake',
-    icon: <Cog className="w-7 h-7" />,
-    color: 'from-teal-500 to-emerald-400',
-    glowColor: 'rgba(16,185,129,0.6)',
-    description: 'An automated rake/conveyor mechanism lifts and transfers captured waste from the screen.',
-    details: [
-      'Motorised rake teeth travel upward along the bar screen face.',
-      'Captured debris is lifted clear of the water surface continuously.',
-      'Servo-controlled speed adjusts based on debris load detected by sensors.',
-      'Conveyor belt transfers waste horizontally to the collection zone.',
-      'Anti-jam detection pauses the system and raises an alert if resistance spikes.',
-    ],
-    animation: 'gear-spin',
+    id: 'separation',
+    stepNum: '03',
+    name: 'WASTE SEPARATION',
+    unit: 'Mechanical Sorter Bay',
+    whatHappens: 'The harvested catch is transferred onshore and mechanically separated into discrete material streams: recyclable plastics, wet algae biomass, and dry organic leaves.',
+    technologyUsed: 'Vibratory density sieves, magnetic iron-debris separators, and flotation settling chambers.',
+    scientificPrinciple: 'Density-Differential Flotation & Size-Exclusion Screening.',
+    outputProduced: 'Sorted streams: Cleaned recyclable plastics + Pure dewatered algae pulp + Organic leaves.',
+    color: 'from-amber-500/20 to-amber-900/10',
+    borderColor: 'border-amber-500/40',
+    accent: 'text-amber-400',
+    icon: <Trash2 className="w-5 h-5" />,
   },
   {
-    id: 4,
-    title: 'Waste Collection',
-    shortTitle: 'Collect',
-    icon: <Trash2 className="w-7 h-7" />,
-    color: 'from-emerald-500 to-green-400',
-    glowColor: 'rgba(34,197,94,0.6)',
-    description: 'Captured waste falls into a sealed collection container for periodic disposal.',
-    details: [
-      'Covered bins prevent odour escape and secondary contamination.',
-      'Ultrasonic fill-level sensors alert operators when bins reach 80% capacity.',
-      'Drain ports at the base allow residual water to return to the treatment channel.',
-      'Bin exchange is performed without interrupting plant operation.',
-      'Weight sensors log total collected waste mass for analytics.',
-    ],
-    animation: 'bin-fill',
+    id: 'aquafert',
+    stepNum: '04',
+    name: 'AQUAFERT + RECYCLING',
+    unit: 'Unit B (Fertiliser Facility)',
+    whatHappens: 'Plastics are baled for municipal recycling loops. Algae is blended with shredded dry straw to achieve an optimal C:N ratio (25:1 to 30:1) and aerobically composted at thermophilic 55–65°C.',
+    technologyUsed: 'Continuous screw press dewaterer, forced-aeration composting windrows, ELISA toxin testing.',
+    scientificPrinciple: 'Aerobic Microbial Respiration, Thermophilic Sanitization & Stoichiometric C:N Dynamics.',
+    outputProduced: 'Certified pathogen-free, nutrient-rich organic soil amendment (organic N-P-K compost).',
+    color: 'from-emerald-500/20 to-emerald-900/10',
+    borderColor: 'border-emerald-500/40',
+    accent: 'text-emerald-400',
+    icon: <Sprout className="w-5 h-5" />,
   },
   {
-    id: 5,
-    title: 'Treated Water Flow',
-    shortTitle: 'Clean',
-    icon: <CheckCircle className="w-7 h-7" />,
-    color: 'from-green-500 to-lime-400',
-    glowColor: 'rgba(132,204,22,0.6)',
-    description: 'Screened water, now free of solid waste, proceeds to secondary treatment stages.',
-    details: [
-      'Post-screen water enters sedimentation tanks for suspended-solid removal.',
-      'Turbidity sensors confirm solid-waste removal efficiency after screening.',
-      'Dissolved-oxygen probes baseline water quality before biological treatment.',
-      'Flow rate is recalculated post-screen to account for waste volume removed.',
-      'Automated diversion valves route water to the correct downstream process.',
-    ],
-    animation: 'clean-flow',
+    id: 'aquapure',
+    stepNum: '05',
+    name: 'AQUAPURE MULTI-STAGE',
+    unit: 'Unit C (Purification Facility)',
+    whatHappens: 'Remaining pond water is pumped into the multi-barrier treatment train, undergoing preliminary screening, chemical coagulation, lamella sedimentation, sand filtration, activated carbon adsorption, and UV-C germicidal disinfection.',
+    technologyUsed: 'Polyaluminium chloride dosers, high-rate lamella clarifier, GAC carbon bed, 254nm UV-C reactor.',
+    scientificPrinciple: "Colloidal Double-Layer Compression, Stokes' Gravitational Settling, and Pyrimidine Dimerization.",
+    outputProduced: 'High-purity clarified water free of pathogenic microbes and dissolved odor compounds.',
+    color: 'from-teal-500/20 to-teal-900/10',
+    borderColor: 'border-teal-500/40',
+    accent: 'text-teal-400',
+    icon: <Layers className="w-5 h-5" />,
   },
   {
-    id: 6,
-    title: 'Sensor Dashboard',
-    shortTitle: 'Monitor',
-    icon: <Wifi className="w-7 h-7" />,
-    color: 'from-lime-500 to-cyan-400',
-    glowColor: 'rgba(6,182,212,0.6)',
-    description: 'IoT sensors relay real-time monitoring data to an AI-powered operations dashboard.',
-    details: [
-      'ESP32 / Arduino microcontrollers aggregate sensor readings every 500 ms.',
-      'Data is transmitted via MQTT over Wi-Fi to the cloud dashboard.',
-      'AI anomaly-detection flags unusual patterns before failures occur.',
-      'Historical trend charts support predictive maintenance scheduling.',
-      'Remote alerts via email/SMS notify operators of critical events instantly.',
-    ],
-    animation: 'wifi-pulse',
+    id: 'testing',
+    stepNum: '06',
+    name: 'WATER QUALITY AUDIT',
+    unit: 'Automated Telemetry Lab',
+    whatHappens: 'Effluent is analyzed in real time across 7 critical parameters (pH, Turbidity, TDS, DO, E. coli, Heavy Metals, COD) against national irrigation and environmental release guidelines.',
+    technologyUsed: 'Multi-parametric flow-through optical cell, nephelometric turbidimeter, automated alert logic.',
+    scientificPrinciple: 'Nephelometry, Potentiometry, and Electro-Chemical Sensor Transduction.',
+    outputProduced: 'Certified compliance audit telemetry certifying safety for intended reuse.',
+    color: 'from-purple-500/20 to-purple-900/10',
+    borderColor: 'border-purple-500/40',
+    accent: 'text-purple-400',
+    icon: <Beaker className="w-5 h-5" />,
+  },
+  {
+    id: 'reuse',
+    stepNum: '07',
+    name: 'APPROPRIATE REUSE',
+    unit: 'Sustainable Application',
+    whatHappens: 'The verified clean water is delivered to surrounding farmlands for crop irrigation, pumped to replenish fish ponds, or recharged into dwindling local groundwater aquifers.',
+    technologyUsed: 'Solar-powered distribution pumping manifold, low-pressure drip irrigation distribution.',
+    scientificPrinciple: 'Hydro-Geological Aquifer Recharge & Soil Water Retention.',
+    outputProduced: 'Restored groundwater table, boosted agricultural crop yield, and flourishing pond sanctuary.',
+    color: 'from-green-500/20 to-green-900/10',
+    borderColor: 'border-green-500/40',
+    accent: 'text-green-400',
+    icon: <Droplets className="w-5 h-5" />,
   },
 ];
 
-const WaterFlowArrow: React.FC<{ active: boolean }> = ({ active }) => (
-  <div className="relative flex items-center justify-center w-10 shrink-0">
-    <div
-      className={`h-0.5 w-full transition-all duration-500 ${
-        active ? 'bg-cyan-400' : 'bg-white/20'
-      }`}
-    />
-    {/* Animated water drop */}
-    {active && (
-      <motion.div
-        className="absolute left-0 w-2 h-2 rounded-full bg-cyan-400"
-        animate={{ x: [0, 36] }}
-        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-      />
-    )}
-    <ArrowRight
-      className={`absolute right-0 w-4 h-4 transition-colors duration-300 ${
-        active ? 'text-cyan-400' : 'text-white/20'
-      }`}
-    />
-  </div>
-);
+export default function HowItWorks() {
+  const [selectedNodeId, setSelectedNodeId] = useState<string>('aquaclean');
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
 
-const HowItWorks: React.FC = () => {
-  const [activeStage, setActiveStage] = useState<Stage | null>(stages[0]);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
-
-  const handleStageClick = (stage: Stage) => {
-    setActiveStage(prev => (prev?.id === stage.id ? null : stage));
-  };
+  const activeNode = flowNodes.find((n) => n.id === selectedNodeId) || flowNodes[1];
 
   return (
     <section
       id="how-it-works"
-      ref={sectionRef}
-      className="relative py-24 bg-gradient-to-b from-[#0a1628] via-[#0d2244] to-[#0a1628] overflow-hidden"
+      ref={ref}
+      className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#0a1628] via-[#081e36] to-[#0a1628] overflow-hidden"
     >
-      {/* Background shimmer */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-500/5 rounded-full blur-3xl" />
-      </div>
+      {/* Decorative glows */}
+      <div className="absolute top-1/3 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-16"
-        >
-          <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 mb-4">
-            Step-by-Step Process
-          </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            How It{' '}
-            <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-              Works
-            </span>
-          </h2>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto">
-            Follow water through each stage of our automated screening system — click any stage to
-            explore in depth.
-          </p>
-        </motion.div>
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-widest mb-4"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Interactive Feature 4 & 9 • Complete System Flowchart
+          </motion.div>
 
-        {/* Main layout: flow + detail panel */}
-        <div className="flex flex-col xl:flex-row gap-8">
-          {/* Process Flow */}
-          <div className="flex-1">
-            {/* Horizontal flow — desktop */}
-            <div className="hidden lg:flex items-center gap-0 mb-6 overflow-x-auto pb-4">
-              {stages.map((stage, idx) => (
-                <div key={stage.id} className="flex items-center shrink-0">
-                  <motion.button
-                    onClick={() => handleStageClick(stage)}
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.6, delay: idx * 0.1 }}
-                    whileHover={{ scale: 1.05, y: -4 }}
-                    className={`relative flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all duration-300 cursor-pointer w-28 ${
-                      activeStage?.id === stage.id
-                        ? 'border-cyan-400/60 bg-cyan-500/10'
-                        : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8'
-                    }`}
-                    style={
-                      activeStage?.id === stage.id
-                        ? { boxShadow: `0 0 24px ${stage.glowColor}` }
-                        : {}
-                    }
-                  >
-                    {/* Stage number */}
-                    <span
-                      className={`absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
-                        activeStage?.id === stage.id
-                          ? 'bg-cyan-500 text-white'
-                          : 'bg-white/10 text-white/60'
-                      }`}
-                    >
-                      {stage.id}
-                    </span>
-                    {/* Icon */}
-                    <div
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br ${stage.color} ${
-                        activeStage?.id === stage.id ? 'shadow-lg' : 'opacity-70'
-                      }`}
-                    >
-                      <div className="text-white">{stage.icon}</div>
-                    </div>
-                    <span className="text-xs text-white/80 font-medium text-center leading-tight">
-                      {stage.shortTitle}
-                    </span>
-                  </motion.button>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-6"
+            style={{ fontFamily: 'Poppins, sans-serif' }}
+          >
+            How AquaSense Works:{' '}
+            <span className="gradient-text">Complete Interactive Process</span>
+          </motion.h2>
 
-                  {/* Arrow connector */}
-                  {idx < stages.length - 1 && (
-                    <WaterFlowArrow active={activeStage !== null && activeStage.id >= stage.id} />
-                  )}
-                </div>
-              ))}
-            </div>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-base sm:text-lg text-white/70 leading-relaxed"
+          >
+            Click any stage in the flow sequence to inspect what happens, the engineering technology
+            deployed, the governing scientific principles, and the tangible outputs produced.
+          </motion.p>
+        </div>
 
-            {/* Vertical flow — mobile / tablet */}
-            <div className="flex lg:hidden flex-col gap-4">
-              {stages.map((stage, idx) => (
-                <div key={stage.id} className="flex flex-col items-center">
-                  <motion.button
-                    onClick={() => handleStageClick(stage)}
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.5, delay: idx * 0.1 }}
-                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 ${
-                      activeStage?.id === stage.id
-                        ? 'border-cyan-400/60 bg-cyan-500/10'
-                        : 'border-white/10 bg-white/5'
-                    }`}
-                    style={
-                      activeStage?.id === stage.id
-                        ? { boxShadow: `0 0 20px ${stage.glowColor}` }
-                        : {}
-                    }
-                  >
-                    <div
-                      className={`w-12 h-12 shrink-0 rounded-xl flex items-center justify-center bg-gradient-to-br ${stage.color}`}
-                    >
-                      <div className="text-white">{stage.icon}</div>
-                    </div>
-                    <div className="text-left">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-xs text-cyan-400 font-semibold">Stage {stage.id}</span>
-                      </div>
-                      <p className="text-white font-semibold text-sm">{stage.title}</p>
-                      <p className="text-white/50 text-xs line-clamp-2 mt-0.5">{stage.description}</p>
-                    </div>
-                    <ChevronRight
-                      className={`ml-auto shrink-0 text-white/40 transition-transform duration-300 ${
-                        activeStage?.id === stage.id ? 'rotate-90 text-cyan-400' : ''
-                      }`}
-                    />
-                  </motion.button>
-                  {idx < stages.length - 1 && (
-                    <div className="w-0.5 h-5 bg-gradient-to-b from-cyan-400/40 to-transparent" />
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Stage cards grid (desktop — below flow) */}
-            <div className="hidden lg:grid grid-cols-3 gap-4 mt-6">
-              {stages.map((stage, idx) => (
-                <motion.div
-                  key={stage.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.6 + idx * 0.08 }}
-                  onClick={() => handleStageClick(stage)}
-                  className={`cursor-pointer p-4 rounded-xl border transition-all duration-300 ${
-                    activeStage?.id === stage.id
-                      ? 'border-cyan-400/40 bg-cyan-500/8'
-                      : 'border-white/8 bg-white/3 hover:border-white/15 hover:bg-white/6'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div
-                      className={`w-9 h-9 shrink-0 rounded-lg flex items-center justify-center bg-gradient-to-br ${stage.color} opacity-90`}
-                    >
-                      <div className="text-white scale-75">{stage.icon}</div>
-                    </div>
-                    <div>
-                      <p className="text-white/90 font-semibold text-sm">{stage.title}</p>
-                      <p className="text-white/50 text-xs mt-0.5 line-clamp-2">{stage.description}</p>
-                    </div>
+        {/* ─── CLICKABLE INTERACTIVE PROCESS FLOWCHART ─── */}
+        <div className="mb-12">
+          {/* Node Flow Sequence */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
+            {flowNodes.map((node) => (
+              <button
+                key={node.id}
+                onClick={() => setSelectedNodeId(node.id)}
+                className={`p-3.5 rounded-2xl text-left transition-all cursor-pointer border relative overflow-hidden flex flex-col justify-between ${
+                  selectedNodeId === node.id
+                    ? 'bg-gradient-to-b from-cyan-500/30 to-blue-600/20 border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)] scale-102'
+                    : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/15'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-mono font-bold text-white/50">{node.stepNum}</span>
+                    <span className={node.accent}>{node.icon}</span>
                   </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
+                  <div className="text-xs font-bold text-white leading-tight mb-1">{node.name}</div>
+                  <div className="text-[10px] text-white/60 truncate">{node.unit}</div>
+                </div>
 
-          {/* Detail Panel — right side */}
-          <div className="xl:w-96 shrink-0">
-            <AnimatePresence mode="wait">
-              {activeStage ? (
-                <motion.div
-                  key={activeStage.id}
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 30 }}
-                  transition={{ duration: 0.35, ease: 'easeOut' }}
-                  className="relative h-full rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6 overflow-hidden"
-                  style={{ boxShadow: `0 0 40px ${activeStage.glowColor}30` }}
-                >
-                  {/* Gradient blob */}
-                  <div
-                    className={`absolute -top-10 -right-10 w-40 h-40 rounded-full bg-gradient-to-br ${activeStage.color} opacity-10 blur-2xl pointer-events-none`}
+                {/* Animated active bottom indicator */}
+                {selectedNodeId === node.id && (
+                  <motion.div
+                    layoutId="active-flow-node"
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-cyan-400"
                   />
-
-                  {/* Close */}
-                  <button
-                    onClick={() => setActiveStage(null)}
-                    className="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-                  >
-                    <X className="w-4 h-4 text-white/70" />
-                  </button>
-
-                  {/* Stage badge */}
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/15 text-cyan-400 border border-cyan-500/20 mb-4">
-                    Stage {activeStage.id}
-                  </span>
-
-                  {/* Icon + title */}
-                  <div className="flex items-center gap-4 mb-4">
-                    <div
-                      className={`w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br ${activeStage.color} shadow-lg`}
-                    >
-                      <div className="text-white">{activeStage.icon}</div>
-                    </div>
-                    <h3 className="text-xl font-bold text-white leading-tight">{activeStage.title}</h3>
-                  </div>
-
-                  <p className="text-white/70 text-sm mb-5 leading-relaxed">{activeStage.description}</p>
-
-                  <div className="space-y-3">
-                    {activeStage.details.map((detail, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.08 }}
-                        className="flex items-start gap-3"
-                      >
-                        <div
-                          className={`mt-1.5 w-1.5 h-1.5 shrink-0 rounded-full bg-gradient-to-br ${activeStage.color}`}
-                        />
-                        <p className="text-white/60 text-sm leading-relaxed">{detail}</p>
-                      </motion.div>
-                    ))}
-                  </div>
-
-                  {/* Navigation buttons */}
-                  <div className="flex gap-3 mt-6">
-                    <button
-                      onClick={() =>
-                        setActiveStage(stages[Math.max(0, activeStage.id - 2)])
-                      }
-                      disabled={activeStage.id === 1}
-                      className="flex-1 py-2 rounded-xl text-sm font-medium border border-white/10 text-white/60 hover:border-white/20 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                    >
-                      ← Previous
-                    </button>
-                    <button
-                      onClick={() =>
-                        setActiveStage(stages[Math.min(stages.length - 1, activeStage.id)])
-                      }
-                      disabled={activeStage.id === stages.length}
-                      className={`flex-1 py-2 rounded-xl text-sm font-medium text-white bg-gradient-to-r ${activeStage.color} disabled:opacity-30 disabled:cursor-not-allowed transition-all hover:opacity-90`}
-                    >
-                      Next →
-                    </button>
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="placeholder"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="h-full min-h-[300px] rounded-2xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-3 text-center p-8"
-                >
-                  <div className="w-14 h-14 rounded-full bg-cyan-500/10 flex items-center justify-center">
-                    <Droplets className="w-7 h-7 text-cyan-400/60" />
-                  </div>
-                  <p className="text-white/40 text-sm">
-                    Click any stage above to explore detailed information about that step in the
-                    process.
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                )}
+              </button>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* CSS animation for water flow */}
-      <style>{`
-        @keyframes waterDrop {
-          0% { transform: translateX(0); opacity: 1; }
-          100% { transform: translateX(100%); opacity: 0; }
-        }
-      `}</style>
+        {/* ─── ACTIVE NODE DEEP-DIVE INSPECTOR CARD ─── */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeNode.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.35 }}
+            className="rounded-3xl bg-slate-900/90 border border-cyan-500/30 p-6 sm:p-8 backdrop-blur-xl shadow-2xl"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-cyan-400">
+                  {activeNode.icon}
+                </div>
+                <div>
+                  <span className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest">
+                    Flow Node {activeNode.stepNum} • {activeNode.unit}
+                  </span>
+                  <h3 className="text-2xl font-bold text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    {activeNode.name}
+                  </h3>
+                </div>
+              </div>
+
+              <span className="px-3.5 py-1.5 rounded-xl text-xs font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shrink-0">
+                Connected Closed-Loop
+              </span>
+            </div>
+
+            {/* 4 Deep-Dive Grid Sections */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* 1. What Happens at This Stage */}
+              <div className="p-5 rounded-2xl bg-white/5 border border-white/5">
+                <div className="text-xs font-mono uppercase tracking-wider text-cyan-400 mb-2 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>1. What Happens at This Stage</span>
+                </div>
+                <p className="text-sm text-white/80 leading-relaxed">
+                  {activeNode.whatHappens}
+                </p>
+              </div>
+
+              {/* 2. Which Technology is Used */}
+              <div className="p-5 rounded-2xl bg-white/5 border border-white/5">
+                <div className="text-xs font-mono uppercase tracking-wider text-emerald-400 mb-2 flex items-center gap-2">
+                  <Zap className="w-4 h-4" />
+                  <span>2. Which Technology is Used</span>
+                </div>
+                <p className="text-sm text-white/80 leading-relaxed">
+                  {activeNode.technologyUsed}
+                </p>
+              </div>
+
+              {/* 3. Which Scientific Principle is Involved */}
+              <div className="p-5 rounded-2xl bg-white/5 border border-white/5">
+                <div className="text-xs font-mono uppercase tracking-wider text-purple-400 mb-2 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  <span>3. Governing Scientific Principle</span>
+                </div>
+                <p className="text-sm text-white/80 leading-relaxed">
+                  {activeNode.scientificPrinciple}
+                </p>
+              </div>
+
+              {/* 4. What Output is Produced */}
+              <div className="p-5 rounded-2xl bg-white/5 border border-white/5">
+                <div className="text-xs font-mono uppercase tracking-wider text-amber-400 mb-2 flex items-center gap-2">
+                  <Layers className="w-4 h-4" />
+                  <span>4. What Output is Produced</span>
+                </div>
+                <p className="text-sm text-white/80 leading-relaxed font-semibold text-emerald-300">
+                  {activeNode.outputProduced}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </section>
   );
-};
-
-export default HowItWorks;
+}

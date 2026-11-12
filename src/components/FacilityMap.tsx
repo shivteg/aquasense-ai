@@ -253,7 +253,7 @@ export default function FacilityMap({ darkMode }: FacilityMapProps) {
         >
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 mb-4 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
             <Workflow size={14} />
-            AquaClean AI // Interactive Facility Map
+            AquaSense // Interactive Facility Map
           </div>
           <h2
             className={`text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-4 ${
@@ -596,7 +596,7 @@ export default function FacilityMap({ darkMode }: FacilityMapProps) {
             darkMode ? 'bg-white/5 border-white/10 text-white/50' : 'bg-white border-slate-200 text-slate-500 shadow-sm'
           }`}
         >
-          💡 <strong>Facility Overview:</strong> AquaClean AI coordinates mechanical, electrical, and AI vision
+          💡 <strong>Facility Overview:</strong> AquaSense coordinates mechanical, electrical, and AI vision
           subsystems into a unified, autonomous screening station engineered for municipal and river intake plants.
         </div>
       </div>

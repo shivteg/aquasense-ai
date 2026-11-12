@@ -1,324 +1,373 @@
+import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Brain, Camera, Gauge, Grid3X3, Sparkles } from 'lucide-react';
-import { useRef, useState } from 'react';
-import Modal from './Modal';
+import {
+  CheckCircle2,
+  Recycle,
+  RotateCw,
+  Sparkles,
+  Sprout,
+  Trash2,
+  Layers,
+} from 'lucide-react';
 
-interface TechCard {
+interface SolutionPillar {
   id: string;
-  icon: React.ReactNode;
+  stepNumber: string;
   title: string;
-  tagline: string;
+  unitName: string;
   description: string;
-  modalTitle: string;
-  modalContent: React.ReactNode;
-  accentColor: string;
-  glowColor: string;
+  highlights: string[];
+  color: string;
+  borderColor: string;
+  accent: string;
 }
 
-const techCards: TechCard[] = [
+const pillars: SolutionPillar[] = [
   {
-    id: 'screening',
-    icon: <Grid3X3 size={36} />,
-    title: 'Automated Screening',
-    tagline: 'Precision bar-screen filtration',
-    description:
-      'Motorised bar screens intercept floating waste at the inlet channel, automatically adjusting rake frequency based on debris load detected by upstream sensors.',
-    modalTitle: 'Automated Screening — Deep Dive',
-    accentColor: 'from-cyan-500 to-cyan-700',
-    glowColor: 'shadow-cyan-500/20',
-    modalContent: (
-      <div className="space-y-4 text-sm leading-relaxed">
-        <p>
-          Our automated bar screen system uses stainless-steel raking mechanisms driven by
-          variable-speed motors. Unlike fixed-interval mechanical cleaners, the AquaClean
-          system ties rake activation directly to real-time differential pressure readings
-          across the screen, ensuring energy is used only when cleaning is actually needed.
-        </p>
-        <h4 className="text-base font-semibold text-cyan-400">Key Features</h4>
-        <ul className="list-disc space-y-1 pl-5 text-white/70">
-          <li>Stainless-steel 304-grade bar screen, 10 mm to 100 mm aperture options</li>
-          <li>Variable-speed motorised rakes with torque overload protection</li>
-          <li>Differential pressure sensors trigger cleaning at configurable thresholds</li>
-          <li>Self-cleaning brush system for fine-screen variants</li>
-          <li>ATEX-rated enclosures suitable for enclosed wet-well environments</li>
-        </ul>
-        <h4 className="text-base font-semibold text-cyan-400">Performance</h4>
-        <p className="text-white/70">
-          Up to 95 % solid waste capture efficiency at peak flow. Screen blockage events
-          reduced by 87 % compared to manual raking operations.
-        </p>
-      </div>
-    ),
+    id: 'aquaclean',
+    stepNumber: '01',
+    title: 'Autonomous Surface Harvesting',
+    unitName: 'AquaClean Floating Robot',
+    description: 'Autonomous dual-pontoon surface robot skims excessive algae blooms and floating plastic debris without disturbing delicate benthic pond beds.',
+    highlights: [
+      'Twin HDPE pontoons with 85+ kg reserve buoyancy',
+      'Continuous rotating wire mesh conveyor skimming',
+      'Ultrasonic obstacle avoidance & ESP32 telemetry',
+    ],
+    color: 'from-cyan-500/15 to-transparent',
+    borderColor: 'border-cyan-500/30',
+    accent: 'text-cyan-400',
   },
   {
-    id: 'mechanical',
-    icon: (
-      <svg viewBox="0 0 36 36" width={36} height={36} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="4" y="22" width="28" height="6" rx="2" />
-        <rect x="4" y="8" width="28" height="6" rx="2" />
-        <line x1="10" y1="14" x2="10" y2="22" />
-        <line x1="18" y1="14" x2="18" y2="22" />
-        <line x1="26" y1="14" x2="26" y2="22" />
-        <circle cx="10" cy="8" r="2" fill="currentColor" stroke="none" />
-        <circle cx="26" cy="22" r="2" fill="currentColor" stroke="none" />
-      </svg>
-    ),
-    title: 'Mechanical Waste Collection',
-    tagline: 'Conveyor-driven removal',
-    description:
-      'An integrated conveyor-rake assembly continuously lifts screened debris out of the channel and deposits it into sealed collection hoppers for safe disposal.',
-    modalTitle: 'Mechanical Waste Collection — Deep Dive',
-    accentColor: 'from-blue-500 to-blue-700',
-    glowColor: 'shadow-blue-500/20',
-    modalContent: (
-      <div className="space-y-4 text-sm leading-relaxed">
-        <p>
-          The mechanical collection subsystem bridges the gap between debris capture and
-          disposal. A continuous-loop conveyor belt, lined with perforated stainless-steel
-          panels, carries raked waste from the bottom of the inlet up a 30–60° incline and
-          discharges it into a closed collection hopper.
-        </p>
-        <h4 className="text-base font-semibold text-cyan-400">System Components</h4>
-        <ul className="list-disc space-y-1 pl-5 text-white/70">
-          <li>Inclined perforated conveyor belt — allows drainage water to return</li>
-          <li>Scraper bars to prevent debris sticking to belt surface</li>
-          <li>Sealed collection hopper with volume sensor and auto-compaction</li>
-          <li>Overflow alarm when hopper exceeds 80 % capacity</li>
-          <li>Corrosion-resistant drive chain rated for continuous outdoor use</li>
-        </ul>
-        <h4 className="text-base font-semibold text-cyan-400">Throughput</h4>
-        <p className="text-white/70">
-          Handles up to 2 tonnes of mixed solid waste per hour. Hopper capacity: 500 litres.
-          Average emptying interval: 8–12 hours under normal load.
-        </p>
-      </div>
-    ),
+    id: 'separation',
+    stepNumber: '02',
+    title: 'Dual-Stream Waste Separation',
+    unitName: 'Mechanical Sorter & Flotation Chamber',
+    description: 'Harvested mixed catch is automatically segregated using size-exclusion sieves and density-differential flotation chambers.',
+    highlights: [
+      'Plastic bottles & wrappers recovered for recycling loops',
+      'Algae biomass directed to dewatering screw press',
+      'Coarse twigs & organic leaves isolated for carbon balancing',
+    ],
+    color: 'from-amber-500/15 to-transparent',
+    borderColor: 'border-amber-500/30',
+    accent: 'text-amber-400',
   },
   {
-    id: 'sensors',
-    icon: <Gauge size={36} />,
-    title: 'Smart Sensor Monitoring',
-    tagline: 'Real-time environmental intelligence',
-    description:
-      'A network of ultrasonic, pressure and turbidity sensors continuously monitors channel conditions and feeds live data to the control dashboard and AI engine.',
-    modalTitle: 'Smart Sensor Monitoring — Deep Dive',
-    accentColor: 'from-emerald-500 to-emerald-700',
-    glowColor: 'shadow-emerald-500/20',
-    modalContent: (
-      <div className="space-y-4 text-sm leading-relaxed">
-        <p>
-          Accurate, real-time environmental data is the backbone of AquaClean AI's
-          intelligent operation. We deploy a layered sensor network at each intake point,
-          covering debris levels, water quality and system health.
-        </p>
-        <h4 className="text-base font-semibold text-cyan-400">Sensor Suite</h4>
-        <ul className="list-disc space-y-1 pl-5 text-white/70">
-          <li>Ultrasonic level sensors — debris depth upstream and downstream of screen</li>
-          <li>Differential pressure transducers — real-time head loss across screen</li>
-          <li>Turbidity sensors (NTU) — water clarity at intake and after screening</li>
-          <li>Flow-velocity meters — continuous volumetric flow measurement</li>
-          <li>Temperature probes — monitoring seasonal variation impact</li>
-          <li>Equipment vibration sensors — predictive maintenance alerting</li>
-        </ul>
-        <h4 className="text-base font-semibold text-cyan-400">Connectivity</h4>
-        <p className="text-white/70">
-          All sensors publish to an MQTT broker over RS-485 / 4G-LTE. Data is ingested at
-          1 Hz, stored in a time-series database and surfaced on the live dashboard with
-          configurable alert thresholds.
-        </p>
-      </div>
-    ),
+    id: 'aquafert',
+    stepNumber: '03',
+    title: 'Algae-to-Organic-Fertiliser',
+    unitName: 'AquaFert Composting Facility',
+    description: 'Separated algae biomass is blended with dry carbonaceous matter (C:N 25–30:1) and aerobically composted at thermophilic 55–65°C.',
+    highlights: [
+      'Thermophilic biological sanitization kills weed seeds & pathogens',
+      'Recovers organic Nitrogen, Phosphorus, and trace minerals',
+      'Supplies regenerative soil amendment to local farmers',
+    ],
+    color: 'from-emerald-500/15 to-transparent',
+    borderColor: 'border-emerald-500/30',
+    accent: 'text-emerald-400',
   },
   {
-    id: 'ai',
-    icon: <Brain size={36} />,
-    title: 'AI-Assisted Waste Detection',
-    tagline: 'Computer vision at the intake',
-    description:
-      'Overhead cameras feed live footage into an AI vision model that classifies waste types, estimates debris load and triggers targeted rake actions before blockages occur.',
-    modalTitle: 'AI-Assisted Waste Detection — Deep Dive',
-    accentColor: 'from-purple-500 to-purple-700',
-    glowColor: 'shadow-purple-500/20',
-    modalContent: (
-      <div className="space-y-4 text-sm leading-relaxed">
-        <p>
-          At the core of AquaClean AI is a computer-vision pipeline that turns standard
-          camera feeds into actionable waste intelligence. The model identifies, classifies
-          and quantifies waste in real time, without requiring specialist hardware.
-        </p>
-        <h4 className="text-base font-semibold text-cyan-400">Vision Pipeline</h4>
-        <ul className="list-disc space-y-1 pl-5 text-white/70">
-          <li>IP66-rated industrial cameras (2 MP, 25 fps) positioned above intake</li>
-          <li>YOLOv8-based detection model, fine-tuned on 50 k+ waste images</li>
-          <li>Classes: plastic bottles, polythene bags, leaves, foam, mixed debris</li>
-          <li>Coverage estimation: debris density heat-map updated every 2 seconds</li>
-          <li>Edge inference on NVIDIA Jetson Orin — no cloud dependency</li>
-        </ul>
-        <h4 className="text-base font-semibold text-cyan-400">AI Actions</h4>
-        <ul className="list-disc space-y-1 pl-5 text-white/70">
-          <li>Pre-emptive rake trigger when debris density exceeds threshold</li>
-          <li>Waste-type logging for plant reporting and regulatory compliance</li>
-          <li>Anomaly detection — flags unusual objects (large branches, industrial waste)</li>
-          <li>Performance analytics — daily, weekly and monthly capture reports</li>
-        </ul>
-        <h4 className="text-base font-semibold text-cyan-400">Accuracy</h4>
-        <p className="text-white/70">
-          92 % mAP@0.5 on the validation set. False-positive rate under 3 % in operational
-          trials across five pilot sites.
-        </p>
-      </div>
-    ),
+    id: 'aquapure',
+    stepNumber: '04',
+    title: 'Multi-Barrier Water Purification',
+    unitName: 'AquaPure 7-Stage Facility',
+    description: 'Remaining pond water undergoes comprehensive multi-stage screening, coagulation, sedimentation, sand & carbon filtration, and UV-C disinfection.',
+    highlights: [
+      'Screening, coagulation, lamella clarifier, sand & carbon beds',
+      'UV-C germicidal pathogen inactivation (99.99% log-4 kill)',
+      'Verified water reused for drip irrigation & aquifer recharge',
+    ],
+    color: 'from-blue-500/15 to-transparent',
+    borderColor: 'border-blue-500/30',
+    accent: 'text-blue-400',
   },
 ];
 
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.14 } },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: 'easeOut' as const } },
-};
-
 export default function Solution() {
-  const [openModal, setOpenModal] = useState<string | null>(null);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
 
-  const activeCard = techCards.find((c) => c.id === openModal);
+  // ─── INTERACTIVE FEATURE 3: Waste Separation Demonstration State ───
+  const [harvestWeight, setHarvestWeight] = useState<number>(100); // 100 kg batch
+  const [algaePct, setAlgaePct] = useState<number>(55); // 55%
+  const [plasticPct, setPlasticPct] = useState<number>(25); // 25%
+  const [isSorting, setIsSorting] = useState<boolean>(false);
+  const [sortComplete, setSortComplete] = useState<boolean>(true);
+
+  // Remaining percentage is leaves & organic dry matter
+  const organicPct = Math.max(0, 100 - algaePct - plasticPct);
+
+  // Calculated weights
+  const algaeKg = ((harvestWeight * algaePct) / 100).toFixed(1);
+  const plasticKg = ((harvestWeight * plasticPct) / 100).toFixed(1);
+  const organicKg = ((harvestWeight * organicPct) / 100).toFixed(1);
+
+  const handleRunSort = () => {
+    setIsSorting(true);
+    setSortComplete(false);
+    setTimeout(() => {
+      setIsSorting(false);
+      setSortComplete(true);
+    }, 900);
+  };
 
   return (
     <section
       id="solution"
-      ref={sectionRef}
-      className="relative overflow-hidden bg-gradient-to-b from-[#0d2244] via-[#0a1628] to-[#0d2244] py-24 text-white"
+      ref={ref}
+      className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#0a1628] via-[#091a2f] to-[#0a1628] overflow-hidden"
     >
       {/* Decorative glows */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/4 top-0 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/10 blur-3xl"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute bottom-0 right-1/4 h-72 w-72 translate-x-1/2 translate-y-1/2 rounded-full bg-blue-700/10 blur-3xl"
-      />
+      <div className="absolute top-1/3 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="container mx-auto max-w-6xl px-4">
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="mb-4 flex items-center gap-2"
-        >
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-sm font-medium text-cyan-400">
-            <Sparkles size={14} />
-            Our Solution
-          </span>
-        </motion.div>
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-widest mb-4"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Closed-Loop Environmental Architecture
+          </motion.div>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-5 text-4xl font-bold leading-tight lg:text-5xl"
-        >
-          Introducing{' '}
-          <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-            AquaClean AI
-          </span>
-        </motion.h2>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-6"
+            style={{ fontFamily: 'Poppins, sans-serif' }}
+          >
+            Our Solution:{' '}
+            <span className="gradient-text">Integrated Circular Ecosystem</span>
+          </motion.h2>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-16 max-w-3xl text-lg text-white/70"
-        >
-          AquaClean AI combines precision mechanical engineering with real-time sensor data
-          and computer-vision intelligence to create a fully autonomous waste removal system
-          for water treatment intake channels. The result: continuous protection with zero
-          manual intervention, reduced operational costs and dramatically improved water
-          quality at the first stage of treatment.
-        </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-base sm:text-lg text-white/70 leading-relaxed"
+          >
+            AquaSense integrates surface robotics, mechanical waste separation, high-temperature
+            biological composting, and 7-stage water purification into a single harmonized loop.
+          </motion.p>
+        </div>
 
-        {/* Technology cards */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {techCards.map((card) => (
+        {/* 4 Pillars Pipeline Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          {pillars.map((p, idx) => (
             <motion.div
-              key={card.id}
-              variants={cardVariants}
-              whileHover={{ y: -8, transition: { duration: 0.25 } }}
-              className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md transition-shadow hover:shadow-[0_20px_60px_rgba(6,182,212,0.15)]"
+              key={p.id}
+              initial={{ opacity: 0, y: 30 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.3 + idx * 0.1 }}
+              className={`rounded-3xl bg-gradient-to-b ${p.color} bg-slate-900/80 border ${p.borderColor} backdrop-blur-xl p-6 flex flex-col justify-between shadow-xl`}
             >
-              {/* Top gradient bar */}
-              <div
-                className={`absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r ${card.accentColor}`}
-              />
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className={`text-xs font-mono font-extrabold ${p.accent}`}>
+                    STAGE {p.stepNumber}
+                  </span>
+                  <span className="text-[10px] font-mono uppercase text-white/40 px-2 py-0.5 rounded bg-white/5 border border-white/5">
+                    {p.unitName.split(' ')[0]}
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-1" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                  {p.title}
+                </h3>
+                <div className={`text-xs font-medium ${p.accent} mb-3`}>{p.unitName}</div>
+                <p className="text-xs text-white/70 leading-relaxed mb-4">{p.description}</p>
 
-              {/* Icon */}
-              <div
-                className={`mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${card.accentColor} bg-opacity-20 p-3 text-white shadow-lg ${card.glowColor}`}
-              >
-                {card.icon}
+                <div className="space-y-1.5 pt-3 border-t border-white/10">
+                  {p.highlights.map((h, i) => (
+                    <div key={i} className="flex items-start gap-1.5 text-[11px] text-white/80">
+                      <CheckCircle2 className={`w-3.5 h-3.5 ${p.accent} shrink-0 mt-0.5`} />
+                      <span>{h}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-
-              {/* Content */}
-              <p className="mb-1 text-xs font-medium uppercase tracking-wider text-white/40">
-                {card.tagline}
-              </p>
-              <h3 className="mb-3 text-lg font-bold text-white">{card.title}</h3>
-              <p className="mb-6 flex-1 text-sm leading-relaxed text-white/60">
-                {card.description}
-              </p>
-
-              {/* Learn More button */}
-              <button
-                onClick={() => setOpenModal(card.id)}
-                className={`flex items-center gap-2 self-start rounded-lg border border-white/10 bg-gradient-to-r ${card.accentColor} px-4 py-2 text-sm font-medium text-white shadow-md transition-all hover:opacity-90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-cyan-400`}
-              >
-                <Camera size={14} />
-                Learn More
-              </button>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Bottom stats strip */}
+        {/* ─── INTERACTIVE FEATURE 3: Waste Separation Demonstration ─── */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-16 grid grid-cols-2 gap-6 rounded-3xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-sm md:grid-cols-4"
+          initial={{ opacity: 0, y: 40 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, delay: 0.5 }}
+          className="rounded-3xl bg-slate-900/90 border border-white/10 p-6 sm:p-8 backdrop-blur-xl shadow-2xl"
         >
-          {[
-            { value: '95%', label: 'Waste capture efficiency' },
-            { value: '24/7', label: 'Autonomous operation' },
-            { value: '87%', label: 'Reduction in blockages' },
-            { value: '92%', label: 'AI detection accuracy' },
-          ].map((stat) => (
-            <div key={stat.label}>
-              <p className="text-3xl font-bold text-cyan-400">{stat.value}</p>
-              <p className="mt-1 text-sm text-white/50">{stat.label}</p>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-wider mb-2">
+                <Recycle className="w-3.5 h-3.5" />
+                Interactive Material Recovery Station
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                Interactive Waste Separation Demonstration
+              </h3>
+              <p className="text-xs sm:text-sm text-white/60 mt-1">
+                Simulate how raw harvested pond debris is automatically fractionated into high-value resources.
+              </p>
             </div>
-          ))}
+
+            <div className="flex items-center gap-2">
+              <span className={`text-[11px] font-mono px-3 py-1.5 rounded-xl border ${
+                isSorting
+                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 animate-pulse'
+                  : sortComplete
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                  : 'bg-white/5 text-white/50 border-white/10'
+              }`}>
+                {isSorting ? '⚙️ Centrifugal & Flotation Active...' : '✓ Separation Batch Complete'}
+              </span>
+              <button
+                onClick={handleRunSort}
+                disabled={isSorting}
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-600 hover:from-cyan-400 hover:to-emerald-500 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg cursor-pointer transition-all disabled:opacity-50"
+              >
+                <RotateCw className={`w-3.5 h-3.5 ${isSorting ? 'animate-spin' : ''}`} />
+                <span>{isSorting ? 'Sorting in Progress...' : 'Run Mechanical Separation'}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Interactive Harvest Composition Sliders */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-5 rounded-2xl bg-white/5 border border-white/5 mb-8">
+            {/* Total Batch Weight */}
+            <div>
+              <div className="flex justify-between items-center text-xs mb-2">
+                <span className="text-white/60">Harvest Batch Weight:</span>
+                <span className="font-mono font-bold text-cyan-400">{harvestWeight} kg</span>
+              </div>
+              <input
+                type="range"
+                min={20}
+                max={500}
+                step={10}
+                value={harvestWeight}
+                onChange={(e) => setHarvestWeight(Number(e.target.value))}
+                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+              />
+            </div>
+
+            {/* Algae % */}
+            <div>
+              <div className="flex justify-between items-center text-xs mb-2">
+                <span className="text-white/60">Algae Biomass Share:</span>
+                <span className="font-mono font-bold text-emerald-400">{algaePct}%</span>
+              </div>
+              <input
+                type="range"
+                min={20}
+                max={80}
+                value={algaePct}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setAlgaePct(val);
+                  if (val + plasticPct > 90) setPlasticPct(90 - val);
+                }}
+                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400"
+              />
+            </div>
+
+            {/* Plastic % */}
+            <div>
+              <div className="flex justify-between items-center text-xs mb-2">
+                <span className="text-white/60">Plastic Debris Share:</span>
+                <span className="font-mono font-bold text-red-400">{plasticPct}%</span>
+              </div>
+              <input
+                type="range"
+                min={5}
+                max={40}
+                value={plasticPct}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setPlasticPct(val);
+                  if (algaePct + val > 90) setAlgaePct(90 - val);
+                }}
+                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-red-400"
+              />
+            </div>
+          </div>
+
+          {/* Separation Results Stream Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {/* Stream 1: Algae to AquaFert */}
+            <div className="p-5 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase">
+                    STREAM A • VALORIZATION
+                  </span>
+                  <Sprout className="w-4 h-4 text-emerald-400" />
+                </div>
+                <div className="text-2xl font-black font-mono text-white mb-1">
+                  {algaeKg} <span className="text-xs text-white/50 font-normal">kg</span>
+                </div>
+                <div className="text-xs font-bold text-emerald-300 mb-1">Clean Algae Biomass Pulp</div>
+                <p className="text-[11px] text-white/70 leading-relaxed mb-3">
+                  Transferred directly to AquaFert dewatering screw press and C:N balancing for agricultural composting.
+                </p>
+              </div>
+              <div className="text-[10px] font-mono text-emerald-400/90 bg-emerald-500/10 p-2 rounded-lg border border-emerald-500/20">
+                → Destined for Organic Soil Amendment
+              </div>
+            </div>
+
+            {/* Stream 2: Recyclable Plastics */}
+            <div className="p-5 rounded-2xl bg-red-950/30 border border-red-500/30 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-mono text-red-400 font-bold uppercase">
+                    STREAM B • RECYCLING LOOP
+                  </span>
+                  <Trash2 className="w-4 h-4 text-red-400" />
+                </div>
+                <div className="text-2xl font-black font-mono text-white mb-1">
+                  {plasticKg} <span className="text-xs text-white/50 font-normal">kg</span>
+                </div>
+                <div className="text-xs font-bold text-red-300 mb-1">Recovered Plastics & Polythene</div>
+                <p className="text-[11px] text-white/70 leading-relaxed mb-3">
+                  Density-separated PET bottles, HDPE caps, and wrappers sanitized and baled for municipal plastic recycling.
+                </p>
+              </div>
+              <div className="text-[10px] font-mono text-red-400/90 bg-red-500/10 p-2 rounded-lg border border-red-500/20">
+                → Diverted from Landfills & Microplastic Breakup
+              </div>
+            </div>
+
+            {/* Stream 3: Organic Dry Matter */}
+            <div className="p-5 rounded-2xl bg-amber-950/30 border border-amber-500/30 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-mono text-amber-400 font-bold uppercase">
+                    STREAM C • CARBON SOURCE
+                  </span>
+                  <Layers className="w-4 h-4 text-amber-400" />
+                </div>
+                <div className="text-2xl font-black font-mono text-white mb-1">
+                  {organicKg} <span className="text-xs text-white/50 font-normal">kg</span>
+                </div>
+                <div className="text-xs font-bold text-amber-300 mb-1">Leaves & Fibrous Detritus</div>
+                <p className="text-[11px] text-white/70 leading-relaxed mb-3">
+                  Dried fallen leaves and twigs shredded as carbonaceous bulking agent to adjust composting C:N balance.
+                </p>
+              </div>
+              <div className="text-[10px] font-mono text-amber-400/90 bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
+                → Blended into AquaFert Compost Piles
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
-
-      {/* Detail Modal */}
-      <Modal
-        isOpen={openModal !== null}
-        onClose={() => setOpenModal(null)}
-        title={activeCard?.modalTitle ?? ''}
-      >
-        {activeCard?.modalContent}
-      </Modal>
     </section>
   );
 }

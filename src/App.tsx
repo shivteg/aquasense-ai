@@ -1,16 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import About from './components/About';
 import Problem from './components/Problem';
 import Solution from './components/Solution';
-import HowItWorks from './components/HowItWorks';
+import AquaCleanRobot from './components/AquaCleanRobot';
 import Simulation from './components/Simulation';
+import AquaFert from './components/AquaFert';
+import AquaPure from './components/AquaPure';
+import HowItWorks from './components/HowItWorks';
 import Dashboard from './components/Dashboard';
-import Technology from './components/Technology';
-import Comparison from './components/Comparison';
+import ScientificPrinciples from './components/ScientificPrinciples';
 import Impact from './components/Impact';
+import Comparison from './components/Comparison';
 import FutureScope from './components/FutureScope';
-import FacilityMap from './components/FacilityMap';
 import Contact from './components/Contact';
 import ScientificAccuracy from './components/ScientificAccuracy';
 import Footer from './components/Footer';
@@ -71,43 +74,52 @@ export default function App() {
 
       {/* Main Content Sections */}
       <main className="relative">
-        {/* Page 1: Home Landing Hero */}
+        {/* Section 1: Home Landing Hero */}
         <Hero darkMode={darkMode} />
 
-        {/* Page 2: The Problem */}
+        {/* Section 2: About AquaSense & Before/After Comparison */}
+        <About darkMode={darkMode} />
+
+        {/* Section 3: The Problem */}
         <Problem />
 
-        {/* Page 3: Our Solution */}
+        {/* Section 4: Our Solution & Interactive Waste Separation */}
         <Solution />
 
-        {/* Page 4: How It Works Interactive Process Flow */}
-        <HowItWorks />
+        {/* Section 5: Unit A — AquaClean Floating Smart Robot */}
+        <AquaCleanRobot />
 
-        {/* Page 5: Interactive Working Simulation (Canvas) */}
+        {/* Section 6: Interactive Live Pond Robot Simulation */}
         <Simulation />
 
-        {/* Page 6: Interactive Monitoring Dashboard */}
+        {/* Section 7: Unit B — AquaFert Algae-to-Fertiliser Unit */}
+        <AquaFert />
+
+        {/* Section 8: Unit C — AquaPure 7-Stage Water Treatment */}
+        <AquaPure />
+
+        {/* Section 9: Complete Interactive Working Flowchart */}
+        <HowItWorks />
+
+        {/* Section 10: Interactive Monitoring Dashboard */}
         <Dashboard />
 
-        {/* Page 7: Technology Used */}
-        <Technology />
+        {/* Section 11: Dedicated Scientific Principles */}
+        <ScientificPrinciples />
 
-        {/* Page 8: Manual vs Automated System Comparison */}
-        <Comparison darkMode={darkMode} />
-
-        {/* Page 9: Benefits and Environmental Impact */}
+        {/* Section 12: Environmental Impact & Circular Economy */}
         <Impact darkMode={darkMode} />
 
-        {/* Page 10: Future Scope */}
+        {/* Section 13: Traditional vs AquaSense Paradigm Comparison */}
+        <Comparison darkMode={darkMode} />
+
+        {/* Section 14: Future Scope & Long-Term Roadmap */}
         <FutureScope darkMode={darkMode} />
 
-        {/* Interactive Facility Blueprint Map */}
-        <FacilityMap darkMode={darkMode} />
-
-        {/* Contact Section */}
+        {/* Section 15: Contact & LPU Project Team */}
         <Contact darkMode={darkMode} onShowToast={showToast} />
 
-        {/* Section 7 Requirement: Scientific Accuracy & Rigor Notice */}
+        {/* Section 16: Academic Rigor & Scientific Accuracy Notice */}
         <ScientificAccuracy darkMode={darkMode} />
       </main>
 

@@ -17,7 +17,7 @@
 
 Solid waste — plastic bottles, polythene bags, leaves, wrappers, and accumulated debris — routinely clogs inlet screens at water treatment facilities. Manual removal is repetitive, labour-intensive, and inconsistent. AquaClean AI proposes a mechanically automated bar screen system enhanced with real-time monitoring, sensor data collection, and an AI-assisted detection pipeline that can alert operators before critical blockages occur.
 
-This website is built as a **competition-ready, fully responsive single-page application** that walks visitors through the problem, the proposed solution, an interactive simulation, a live monitoring dashboard, comparative analysis, projected benefits, and the project team.
+This website is built as a **competition-ready, fully responsive single-page application** that walks visitors through the problem, the proposed solution, an interactive simulation, a live monitoring dashboard, comparative analysis, projected benefits, and an interactive facility blueprint map.
 
 ---
 
@@ -108,7 +108,7 @@ aquaclean-ai/
 │   │   ├── Comparison.tsx       # Manual vs Automated comparison
 │   │   ├── Impact.tsx           # Benefits and environmental impact cards
 │   │   ├── FutureScope.tsx      # Future development roadmap
-│   │   ├── Team.tsx             # Team profile placeholder cards
+│   │   ├── FacilityMap.tsx      # Interactive plant blueprint schematic
 │   │   ├── Contact.tsx          # Validated contact form
 │   │   ├── Footer.tsx           # Site footer
 │   │   └── BackToTop.tsx        # Floating scroll-to-top button
@@ -160,7 +160,7 @@ This project is licensed under the **MIT License**.
 ```
 MIT License
 
-Copyright (c) 2024 AquaClean AI Project Team
+Copyright (c) 2024 AquaClean AI
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
